@@ -15,7 +15,10 @@ export function normalizeConfig(raw, env = process.env) {
     if (parsed.username || parsed.password) throw new Error('SITE_URL 不应包含身份信息。');
     url = parsed.origin;
   }
-  return { ...raw, basePath, url, repoUrl: raw.repoUrl ?? '', language: raw.language ?? 'zh-CN' };
+  const categories = raw.categories ?? [];
+  if (!Array.isArray(categories) || categories.some(item => !item || !/^[a-z0-9][a-z0-9-]*$/.test(item.slug) || typeof item.title !== 'string' || !item.title.trim())) throw new Error('栏目需要有效的英文 slug 和中文 title。');
+  if (new Set(categories.map(item => item.slug)).size !== categories.length || new Set(categories.map(item => item.title)).size !== categories.length) throw new Error('栏目 slug 和 title 不能重复。');
+  return { ...raw, categories, basePath, url, repoUrl: raw.repoUrl ?? '', language: raw.language ?? 'zh-CN' };
 }
 
 export async function readPosts(root, config) {
@@ -31,6 +34,7 @@ export async function readPosts(root, config) {
       throw new Error(`${file} 需要 title 和有效的 YYYY-MM-DD 日期。`);
     }
     const rendered = renderMarkdown(body, config);
+    if (config.categories?.length && !config.categories.some(item => item.title === attributes.category)) throw new Error(`${file} 的 category 必须使用 site.config.json 中的栏目名称。`);
     posts.push({
       slug, title: attributes.title, date: attributes.date, category: attributes.category || '学习笔记',
       tags: attributes.tags, summary: attributes.summary || `${rendered.plainText.slice(0, 100)}…`,
@@ -53,6 +57,7 @@ export function makeRss(config, posts) {
 
 export function makeSitemap(config, posts) {
   const pages = ['/', '/posts/', '/roadmap/', '/about/'].map((route) => `<url><loc>${escapeHtml(absoluteUrl(config, route))}</loc></url>`);
+  pages.push(...(config.categories || []).map(category => `<url><loc>${escapeHtml(absoluteUrl(config, `/categories/${category.slug}/`))}</loc></url>`));
   pages.push(...posts.map((post) => `<url><loc>${escapeHtml(absoluteUrl(config, `/posts/${post.slug}/`))}</loc><lastmod>${post.date}</lastmod></url>`));
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.join('\n')}\n</urlset>\n`;
 }
@@ -93,6 +98,7 @@ export async function build({ root = projectRoot, env = process.env, renderer } 
     await write(file, renderPage({ ...context, page }));
   }
   for (const post of posts) await write(`posts/${post.slug}/index.html`, renderPage({ ...context, page: 'post', post, body: post.html, toc: post.toc }));
+  for (const category of config.categories) await write(`categories/${category.slug}/index.html`, renderPage({ ...context, page: 'category', category }));
   await fs.mkdir(path.join(output, 'assets'), { recursive: true });
   await copyAssets(path.join(root, 'assets'), path.join(output, 'assets'));
   await write('rss.xml', makeRss(config, posts));

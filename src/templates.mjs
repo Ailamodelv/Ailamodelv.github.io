@@ -1,65 +1,75 @@
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-const icons = {
-  home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/>',
-  note: '<path d="M6 3h11l3 3v15H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M8 8h7M8 12h8M8 16h5"/>',
-  route: '<circle cx="6" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="M6 8v6a5 5 0 0 0 5 5h4M14 5h7m-3-3 3 3-3 3"/>',
-  user: '<circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
-  arrow: '<path d="M4 12h16m-6-6 6 6-6 6"/>',
-  diagonal: '<path d="M6 18 18 6M6 6h12v12"/>',
-  search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
-  github: '<path d="M9 19c-4.3 1.3-4.3-2.2-6-2.7m12 5v-3.9a3.4 3.4 0 0 0-.9-2.7c3-.3 6.1-1.5 6.1-6.8a5.3 5.3 0 0 0-1.4-3.7 4.9 4.9 0 0 0-.1-3.7s-1.1-.4-3.8 1.4a13 13 0 0 0-6.8 0C5.4.1 4.3.5 4.3.5a4.9 4.9 0 0 0-.1 3.7A5.3 5.3 0 0 0 2.8 8c0 5.3 3.1 6.5 6.1 6.8a3.4 3.4 0 0 0-.9 2.7v3.9"/>',
-  rss: '<circle cx="5" cy="19" r="1"/><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/>',
-};
-const icon = (name, cls = '') => `<svg class="icon ${cls}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.note}</svg>`;
-const formatDate = date => String(date).slice(0, 10).replaceAll('-', '.');
+const dateLabel = date => String(date).slice(0, 10).replaceAll('-', '.');
 
-export function renderPage({ page, config, posts = [], roadmap = {}, post, body = '', toc = [] }) {
-  const base = config.basePath || '';
-  const href = path => `${base}${path}`;
+export function renderPage({ page, config, posts = [], roadmap = {}, post, body = '', toc = [], category }) {
+  const href = path => `${config.basePath || ''}${path}`;
+  const categories = config.categories || [];
+  const categoryPath = item => `/categories/${item.slug}/`;
+  const categoryUrl = name => {
+    const item = categories.find(item => item.title === name);
+    return href(item ? categoryPath(item) : '/posts/');
+  };
   const github = config.github ? `https://github.com/${encodeURIComponent(config.github)}` : '';
-  const repo = config.repoUrl || github;
-  const pages = { home: ['首页', '/'], posts: ['学习手记', '/posts/'], roadmap: ['学习路线', '/roadmap/'], about: ['关于本站', '/about/'] };
-  const active = page === 'post' ? 'posts' : page;
-  const pageTitle = page === 'post' ? post.title : pages[page]?.[0] || '页面未找到';
-  const description = post?.summary || config.description;
-  const canonical = config.url ? `${config.url}${page === 'post' ? post.url : href(pages[page]?.[1] || '/404.html')}` : '';
-  const nav = Object.entries(pages).map(([key, [label, path]]) => `<a class="nav-link ${active === key ? 'active' : ''}" href="${href(path)}" ${active === key ? 'aria-current="page"' : ''}>${icon({ home: 'home', posts: 'note', roadmap: 'route', about: 'user' }[key])}<span>${label}</span>${active === key ? '<span class="nav-dot"></span>' : ''}</a>`).join('');
+  const pageNames = { home: '首页', posts: '全部记录', about: '关于', roadmap: '学习计划', '404': '页面未找到' };
+  const pagePaths = { home: '/', posts: '/posts/', about: '/about/', roadmap: '/roadmap/', '404': '/404.html' };
+  const title = page === 'post' ? post.title : page === 'category' ? category.title : pageNames[page];
+  const currentPath = page === 'post' ? post.url : href(page === 'category' ? categoryPath(category) : pagePaths[page]);
+  const description = page === 'category' ? category.description : post?.summary || config.description;
+  const canonical = config.url ? `${config.url}${currentPath}` : '';
+  const selectedCategory = page === 'category' ? category.title : post?.category;
+  const sampleNotice = items => items.some(item => item.sample)
+    ? '<p class="sample-hint">标注“示例”的文章为建站时的占位内容，尚非我的实际学习经历。</p>' : '';
 
-  function postCard(item, index = 0) {
-    return `<article class="post-card" data-post data-post-category="${escape(item.category)}" data-search="${escape([item.title, item.summary, item.category, ...item.tags, item.plainText].join(' '))}">
-      <a class="post-card-link" href="${escape(item.url)}">
-        <div class="post-meta"><span class="category">${escape(item.category)}</span><time datetime="${escape(item.date)}">${formatDate(item.date)}</time></div>
-        <div class="post-card-title"><h3>${escape(item.title)}</h3>${icon('diagonal')}</div>
-        <p>${escape(item.summary)}</p>
-        <div class="post-bottom"><span>${item.tags.slice(0, 2).map(tag => `<span class="tag"># ${escape(tag)}</span>`).join('')}</span><span>${item.sample ? '<span class="sample-label">示例</span> · ' : ''}${item.readingTime} 分钟</span></div>
-      </a>
+  function noteRow(item) {
+    return `<article class="note-row" data-post data-post-category="${escape(item.category)}" data-search="${escape([item.title, item.summary, item.category, ...item.tags, item.plainText].join(' '))}">
+      <div class="note-date"><time datetime="${escape(item.date)}">${dateLabel(item.date)}</time>${item.sample ? '<span class="sample-badge">示例</span>' : ''}</div>
+      <div class="note-content"><a class="category-link" href="${categoryUrl(item.category)}">${escape(item.category)}</a>
+        <h3><a href="${escape(item.url)}">${escape(item.title)}</a></h3><p>${escape(item.summary)}</p>
+        <div class="note-tags">${item.tags.map(tag => `<span># ${escape(tag)}</span>`).join('')}<span class="reading-time">${item.readingTime} 分钟阅读</span></div>
+      </div>
     </article>`;
   }
-  function sectionHeading(kicker, title, action = '') {
-    return `<div class="section-heading"><div><span class="eyebrow">${kicker}</span><h2>${title}</h2></div>${action}</div>`;
+  function indexList() {
+    return `<nav class="column-index" aria-label="栏目索引">${categories.map(item => {
+      const count = posts.filter(post => post.category === item.title).length;
+      return `<a href="${href(categoryPath(item))}"><div><strong>${escape(item.title)}</strong><span>${count} 篇</span></div><p>${escape(item.description)}</p></a>`;
+    }).join('')}</nav>`;
   }
-  function routeSteps(compact = false) {
-    return `<div class="route-steps ${compact ? 'compact' : ''}">${(roadmap.phases || []).map((phase, index) => `<${compact ? 'a' : 'section'} ${compact ? `href="${href('/roadmap/')}#${escape(phase.id)}"` : `id="${escape(phase.id)}"`} class="route-step"><div class="step-line"><span class="step-number">${String(index + 1).padStart(2, '0')}</span><span class="planned">待开始</span></div><h3>${escape(phase.title)}</h3><p>${escape(phase.description)}</p>${compact ? '' : `<ul>${phase.topics.map(topic => `<li>${escape(topic)}</li>`).join('')}</ul><div class="step-outcome"><span>阶段产出</span>${escape(phase.outcome)}</div>`}</${compact ? 'a' : 'section'}>`).join('')}</div>`;
+  function heading(title, description, label = '') {
+    return `<header class="page-heading">${label ? `<p class="page-label">${escape(label)}</p>` : ''}<h1>${escape(title)}</h1><p>${escape(description)}</p></header>`;
   }
+  function searchBox() {
+    return '<div class="search-bar"><label for="post-search">搜索记录</label><input id="post-search" data-search-input type="search" placeholder="标题、标签或正文" autocomplete="off"></div>';
+  }
+
   let content = '';
   if (page === 'home') {
-    content = `<section class="hero"><div class="hero-copy"><div class="hero-label"><span class="live-dot"></span> 保持好奇，持续记录 <span class="mono">/ 001</span></div><h1>从第一步，<br>走向<span class="serif">具身智能</span><span class="accent-dot">。</span></h1><p class="hero-description">把好奇心拆成可验证的问题。<br>记录人形机器人的原理、实验，<br class="mobile-break">与每一次理解的更新。</p><div class="hero-actions"><a class="button primary" href="${href('/posts/')}">翻开学习手记 ${icon('arrow')}</a><a class="text-link" href="${href('/about/')}">关于这份笔记 ${icon('diagonal')}</a></div><div class="hero-topics"><span>关注方向</span><span>机器人基础</span><i></i><span>运动控制</span><i></i><span>具身智能</span></div></div><div class="hero-visual"><div class="figure-heading"><span>ANATOMY OF CURIOSITY</span><span>01 — ∞</span></div><img src="${href('/assets/robot.svg')}" alt="人形机器人结构示意，标注感知、执行和平衡模块" width="460" height="420"><div class="figure-footer"><span class="live-dot"></span> 从理解一个关节开始 <span class="mono">HUMANOID / STUDY</span></div></div></section>
-      <div class="intro-strip"><span class="mono">THE NOTEBOOK</span><p>不急着给出答案，先把问题记录下来。</p><span class="strip-count">${String(posts.length).padStart(2, '0')} 篇手记 <span>↗</span></span></div>
-      <section class="notes-section">${sectionHeading('FIELD NOTES / 01', '最近的学习手记', `<a class="text-link" href="${href('/posts/')}">全部手记 ${icon('arrow')}</a>`)}${posts.some(item => item.sample) ? '<p class="example-note"><span>内容起点</span> 下方为可替换的写作示例，真实的学习记录从你开始。</p>' : ''}<div class="post-grid">${[...posts.filter(item => item.featured), ...posts.filter(item => !item.featured)].slice(0, 3).map(postCard).join('')}</div>${!posts.length ? '<p class="empty-state">笔记本已经准备好，等待第一篇记录。</p>' : ''}</section>
-      <section class="journey-section">${sectionHeading('THE LEARNING PATH / 02', '一步一步，搭建理解', `<a class="text-link" href="${href('/roadmap/')}">查看完整路线 ${icon('arrow')}</a>`)}${routeSteps(true)}</section>
-      <div class="closing-note"><span class="closing-symbol">↳</span><p>让每一次尝试，都留下可以回看的痕迹。<small>THINK IT THROUGH. WRITE IT DOWN. TRY AGAIN.</small></p><a href="${href('/rss.xml')}" class="rss-link" aria-label="订阅 RSS">${icon('rss')} RSS 订阅</a></div>`;
-  } else if (page === 'posts') {
-    const categories = ['全部', ...new Set(posts.map(item => item.category))];
-    content = `<header class="page-heading"><span class="eyebrow">FIELD NOTES</span><h1>学习手记<span class="accent-dot">。</span></h1><p>把原理写清楚，把过程留下来。<br>这里收集每个问题、实验与尚未想明白的地方。</p></header><section aria-label="文章检索"><div class="search-bar">${icon('search')}<label class="sr-only" for="post-search">搜索标题、标签或正文</label><input id="post-search" data-search-input type="search" placeholder="搜索标题、标签或正文…" autocomplete="off"><span class="mono">SEARCH</span></div><div class="filter-row"><div class="filters" role="group" aria-label="按分类筛选">${categories.map((category, index) => `<button type="button" data-category="${escape(category)}" class="filter ${index === 0 ? 'selected' : ''}" aria-pressed="${index === 0}">${escape(category)}</button>`).join('')}</div><span data-result-count aria-live="polite" class="result-count">${posts.length} 篇手记</span></div>${posts.some(item => item.sample) ? '<p class="example-note"><span>示例内容</span> 标有“示例”的文章用于演示写作结构，可替换为你的真实记录。</p>' : ''}<div class="archive-list">${posts.map(postCard).join('')}</div><p data-empty hidden class="empty-state">还没有匹配的手记，试试其他关键词或分类。</p><noscript><p class="example-note">开启 JavaScript 后可使用搜索和筛选；所有文章均可直接阅读。</p></noscript></section>`;
-  } else if (page === 'roadmap') {
-    content = `<header class="page-heading"><span class="eyebrow">A PATH, NOT A RACE</span><h1>学习路线<span class="accent-dot">。</span></h1><p>从数学语言到机器人行动，给每一步一个小目标。<br>路线可以调整，理解需要自己动手建立。</p></header><div class="roadmap-notice"><span class="status-dot"></span><div><strong>一份可以不断调整的入门计划</strong><p>以下阶段均为待开始的规划，不代表已经完成的学习进度。</p></div><span class="mono">${String(roadmap.phases?.length || 0).padStart(2, '0')} STAGES</span></div>${routeSteps()}<div class="roadmap-end"><span>↺</span><p>路线不是一次写完的。遇到新的问题，就回到需要补上的那一环。</p><a class="text-link" href="${href('/posts/')}">去手记里寻找线索 ${icon('arrow')}</a></div>`;
+    content = `<section class="intro"><p class="page-label">${escape(config.author)} / 个人学习记录</p><h1>我的人形机器人学习记录</h1><p>记下学到的知识、读过的文献、遇到的问题，<br class="desktop-break">以及学习过程中不断变化的想法，留给以后的自己回看。</p></section>
+      <div class="home-layout"><section class="recent-notes"><div class="section-heading"><h2>最近记录</h2><a href="${href('/posts/')}">全部记录 <span aria-hidden="true">→</span></a></div>${sampleNotice(posts)}<div class="note-list">${posts.slice(0, 6).map(noteRow).join('') || '<p class="empty-state">还没有记录。</p>'}</div></section>
+      <aside class="home-aside"><h2>栏目</h2>${indexList()}<div class="aside-note"><h2>关于这份记录</h2><p>以当时的问题和理解为起点，保留推导、尝试、错误与修正。内容会随着学习继续补充。</p><a href="${href('/about/')}">关于这个博客 →</a></div></aside></div>`;
+  } else if (page === 'posts' || page === 'category') {
+    const items = page === 'category' ? posts.filter(item => item.category === category.title) : posts;
+    const filterNames = ['全部', ...new Set([...categories.map(item => item.title), ...posts.map(item => item.category)])];
+    content = `${heading(page === 'category' ? category.title : '全部记录', page === 'category' ? category.description : '按时间整理的个人笔记，保留每个阶段的问题与思考。', page === 'category' ? '栏目' : '归档')}
+      <section aria-label="记录列表">${searchBox()}<div class="filter-row">${page === 'posts' ? `<div class="filters" role="group" aria-label="按栏目筛选">${filterNames.map((name, index) => `<button type="button" data-category="${escape(name)}" class="filter ${index === 0 ? 'selected' : ''}" aria-pressed="${index === 0}">${escape(name)}</button>`).join('')}</div>` : `<a class="back-link" href="${href('/posts/')}">← 全部记录</a>`}<span data-result-count aria-live="polite">${items.length} 篇记录</span></div>
+      ${sampleNotice(items)}<div class="note-list">${items.map(noteRow).join('')}</div><p data-empty ${items.length ? 'hidden' : ''} class="empty-state">${items.length ? '没有匹配的记录，试试其他关键词或栏目。' : '这个栏目还没有记录。'}</p><noscript><p class="sample-hint">搜索和筛选需要 JavaScript；也可通过顶部栏目导航直接浏览。</p></noscript></section>`;
   } else if (page === 'about') {
-    content = `<header class="page-heading"><span class="eyebrow">ABOUT THIS NOTEBOOK</span><h1>你好，这里是<br><span class="serif">${escape(config.title)}</span><span class="accent-dot">。</span></h1><p>一份人形机器人学习者的开放笔记。</p></header><div class="about-layout"><div class="about-prose"><h2>为什么留下这些记录</h2><p>人形机器人连接着数学、机械、感知与控制。面对这样一个复杂的领域，一篇笔记可以是一个很小的起点：解释清楚一个概念，记录一次实验，或者诚实地写下一个还没有解决的问题。</p><p>这个博客用来保存这样的学习过程，让零散的理解逐渐连成一条线，也让以后的自己能够回到当时，重新检查每一步是怎么想的。</p><h2>这里会记录什么</h2><ul><li><strong>基础理解：</strong>坐标变换、运动学、动力学与控制。</li><li><strong>动手过程：</strong>仿真、代码、参数设置，以及能复现的实验步骤。</li><li><strong>问题与反思：</strong>哪里失败了，哪些假设需要重新验证。</li></ul><blockquote>比“学过了”更有意义的，是能把它解释清楚，并且亲手验证。</blockquote><h2>关于内容</h2><p>这里是一份持续修订的学习记录。文章中的结论需要放在各自的模型、条件和实验设置下理解；有新的证据时，也应当回来更新。</p>${posts.some(item => item.sample) ? '<p class="about-sample">目前标记为“示例”的文章展示了笔记的组织方式，不代表作者已经完成相关学习或实验。</p>' : ''}${github ? `<a class="button primary" href="${github}" target="_blank" rel="noopener noreferrer">${icon('github')} 在 GitHub 找到我 ${icon('diagonal')}</a>` : ''}</div><aside class="about-card"><img src="${href('/assets/favicon.svg')}" alt="" width="56" height="56"><span class="eyebrow">THE AUTHOR</span><h2>${escape(config.author)}</h2><p>从原理出发，在实践中理解。</p><div class="about-card-line"><span>正在关注</span><strong>人形机器人 · 具身智能</strong></div><a class="text-link" href="${href('/roadmap/')}">从学习路线开始 ${icon('arrow')}</a></aside></div>`;
+    content = `${heading('关于这份学习记录', '人形机器人领域的个人学习笔记。', config.author)}
+      <div class="about-prose prose"><h2>记录自己的学习过程</h2><p>我想在这里留下学习人形机器人时的过程：一个概念是怎样理解的，一篇论文为什么值得记住，一个问题又是怎样被定位和解决的。</p><p>笔记会带有当时的背景、疑问和局限。有些结论还需要验证，有些想法以后也可能改变，更新和修正同样属于记录的一部分。</p><h2>目前的四个栏目</h2><dl class="about-columns">${categories.map(item => `<div><dt><a href="${href(categoryPath(item))}">${escape(item.title)}</a></dt><dd>${escape(item.description)}</dd></div>`).join('')}</dl><h2>保留上下文，方便以后回看</h2><p>基础笔记里保留推导与疑问，文献记录里保留出处与个人批注，debug 记录里保留环境、报错和排查过程。观点闲谈则留给那些暂时还没有形成完整结论的想法。</p>${sampleNotice(posts)}${github ? `<p><a href="${github}" target="_blank" rel="noopener noreferrer">GitHub · ${escape(config.github)}</a></p>` : ''}</div>`;
   } else if (page === 'post') {
-    const related = posts.filter(item => item.slug !== post.slug).slice(0, 2);
-    content = `<a class="back-link" href="${href('/posts/')}">← 返回全部手记</a><header class="article-heading"><div class="post-meta"><span class="category">${escape(post.category)}</span>${post.sample ? '<span class="sample-label">写作示例</span>' : ''}</div><h1>${escape(post.title)}</h1><p>${escape(post.summary)}</p><div class="article-meta"><span>${escape(config.author)}</span><span>·</span><time datetime="${escape(post.date)}">${formatDate(post.date)}</time><span>·</span><span>约 ${post.readingTime} 分钟</span></div></header><div class="article-layout"><article class="prose" id="article-body">${post.sample ? '<aside class="sample-notice"><strong>这是一篇写作示例</strong><p>内容用于展示学习笔记的结构，不代表已完成的个人经历。发布自己的记录时，请补充真实过程、数据与心得。</p></aside>' : ''}${body}<div class="article-tags">${post.tags.map(tag => `<span class="tag"># ${escape(tag)}</span>`).join('')}</div></article>${toc.length ? `<aside class="toc" aria-label="文章目录"><span class="eyebrow">ON THIS PAGE</span><strong>本篇目录</strong><nav>${toc.map(item => `<a class="toc-level-${item.level}" href="#${escape(item.id)}">${escape(item.text)}</a>`).join('')}</nav></aside>` : ''}</div><section class="related-section">${sectionHeading('KEEP EXPLORING', '接着翻一页', `<a class="text-link" href="${href('/posts/')}">全部手记 ${icon('arrow')}</a>`)}<div class="post-grid related-grid">${related.map(postCard).join('')}</div></section>`;
+    const related = posts.filter(item => item.slug !== post.slug && item.category === post.category).slice(0, 2);
+    content = `<a class="back-link article-back" href="${categoryUrl(post.category)}">← ${escape(post.category)}</a><header class="article-heading"><div class="article-meta"><time datetime="${escape(post.date)}">${dateLabel(post.date)}</time><span>${escape(config.author)}</span><span>${post.readingTime} 分钟阅读</span>${post.sample ? '<span class="sample-badge">示例</span>' : ''}</div><h1>${escape(post.title)}</h1><p>${escape(post.summary)}</p></header>
+      <div class="article-layout"><article class="prose" id="article-body">${post.sample ? '<aside class="sample-notice">这篇文章为建站时的写作示例，尚未替换为我的实际学习记录。</aside>' : ''}${body}<div class="article-tags">${post.tags.map(tag => `<span># ${escape(tag)}</span>`).join('')}</div></article>${toc.length ? `<aside class="toc" aria-label="文章目录"><strong>本文目录</strong><nav>${toc.map(item => `<a class="toc-level-${item.level}" href="#${escape(item.id)}">${escape(item.text)}</a>`).join('')}</nav></aside>` : ''}</div>
+      ${related.length ? `<section class="related-section"><div class="section-heading"><h2>同栏目记录</h2><a href="${categoryUrl(post.category)}">查看栏目 →</a></div>${related.map(noteRow).join('')}</section>` : ''}`;
+  } else if (page === 'roadmap') {
+    content = `${heading('学习计划', '保留建站时的计划草稿，后续可随个人学习情况调整。', '计划草稿')}<div class="prose plan-prose"><p class="sample-notice">以下为初始计划示例，尚非实际学习进度。后续的阶段复盘可记录在“观点闲谈”栏目。</p>${(roadmap.phases || []).map(phase => `<section id="${escape(phase.id)}"><h2>${escape(phase.title)}</h2><p>${escape(phase.description)}</p><ul>${phase.topics.map(topic => `<li>${escape(topic)}</li>`).join('')}</ul></section>`).join('')}</div>`;
   } else {
-    content = `<div class="not-found"><span class="eyebrow">404 / LOST IN COORDINATES</span><h1>暂时偏离了<br>参考坐标系<span class="accent-dot">。</span></h1><p>这个页面不存在，或者已经换了位置。</p><a class="button primary" href="${href('/')}">回到首页 ${icon('arrow')}</a></div>`;
+    content = `${heading('页面未找到', '这个地址暂时没有内容。', '404')}<p><a class="text-link" href="${href('/')}">返回首页 →</a></p>`;
   }
-  return `<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>${escape(page === 'home' ? `${config.title} — 人形机器人学习笔记` : `${pageTitle} · ${config.title}`)}</title><meta name="description" content="${escape(description)}"><meta property="og:title" content="${escape(pageTitle)}"><meta property="og:description" content="${escape(description)}"><meta property="og:type" content="${page === 'post' ? 'article' : 'website'}">${canonical ? `<link rel="canonical" href="${escape(canonical)}"><meta property="og:url" content="${escape(canonical)}">` : ''}<link rel="icon" href="${href('/assets/favicon.svg')}" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="${escape(config.title)}" href="${href('/rss.xml')}"><link rel="stylesheet" href="${href('/assets/style.css')}"><script type="module" src="${href('/assets/main.js')}"></script></head><body><a class="skip-link" href="#main">跳到主要内容</a><div class="mobile-header"><a href="${href('/')}" class="mobile-brand"><img src="${href('/assets/favicon.svg')}" alt="" width="28" height="28">${escape(config.title)}</a><button class="menu-button" data-menu aria-expanded="false" aria-controls="sidebar" type="button">导航 <span>☰</span></button></div><aside class="sidebar" id="sidebar"><a href="${href('/')}" class="brand"><img src="${href('/assets/favicon.svg')}" width="42" height="42" alt=""><span>${escape(config.title)}<small>${escape(config.subtitle)}</small></span></a><div class="sidebar-label">一个学习者的开放笔记</div><nav class="main-nav" aria-label="主导航">${nav}</nav><div class="sidebar-bottom"><div class="sidebar-note"><span class="eyebrow">LEARNING IN PUBLIC</span><p>思考，动手，记录。<br>然后，再往前一步。</p><span class="hand-line"></span></div><div class="sidebar-links">${github ? `<a href="${github}" target="_blank" rel="noopener noreferrer" aria-label="GitHub 主页">${icon('github')}<span>GitHub</span>${icon('diagonal')}</a>` : `<a href="${href('/about/')}">${icon('user')}<span>关于这份笔记</span>${icon('diagonal')}</a>`}<a href="${href('/rss.xml')}">${icon('rss')}<span>RSS 订阅</span>${icon('diagonal')}</a></div></div></aside><div class="workspace"><header class="topbar"><span>HUMANOID ROBOTICS <span class="topbar-slash">/</span> <span class="topbar-light">LEARNING JOURNAL</span></span><span class="topbar-right"><span class="live-dot"></span> 以记录，连接每一步</span></header><main id="main" class="main-content page-${page}">${content}</main><footer class="footer"><span>© ${new Date().getFullYear()} ${escape(config.title)} <span class="footer-divider">/</span> 持续学习，慢慢生长。</span><span>${repo ? `<a href="${escape(repo)}" target="_blank" rel="noopener noreferrer">在 GitHub 查看 ${icon('diagonal')}</a>` : 'MADE OF QUESTIONS & CURIOSITY'}</span></footer></div></body></html>`;
+
+  const navLink = (label, url, selected) => `<a href="${url}"${selected ? ' class="active" aria-current="page"' : ''}>${escape(label)}</a>`;
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>${escape(page === 'home' ? `${config.title} — 我的人形机器人学习记录` : `${title} · ${config.title}`)}</title><meta name="description" content="${escape(description)}"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:type" content="${page === 'post' ? 'article' : 'website'}">${canonical ? `<link rel="canonical" href="${escape(canonical)}"><meta property="og:url" content="${escape(canonical)}">` : ''}<link rel="icon" href="${href('/assets/favicon.svg')}" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="${escape(config.title)}" href="${href('/rss.xml')}"><link rel="stylesheet" href="${href('/assets/style.css')}"><script type="module" src="${href('/assets/main.js')}"></script></head><body><a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="site-header"><div class="header-top"><a class="brand" href="${href('/')}"><span class="brand-mark" aria-hidden="true">记</span><span>${escape(config.title)}</span></a><span class="site-subtitle">人形机器人 · 个人学习笔记</span><button class="menu-button" data-menu type="button" aria-expanded="false" aria-controls="site-navigation">栏目 <span aria-hidden="true">☰</span></button></div>
+    <nav class="site-nav" id="site-navigation" aria-label="主导航">${navLink('首页', href('/'), page === 'home')}${categories.map(item => navLink(item.title, href(categoryPath(item)), selectedCategory === item.title)).join('')}<span class="nav-spacer"></span>${navLink('归档', href('/posts/'), page === 'posts')}${navLink('关于', href('/about/'), page === 'about')}</nav></header>
+    <main id="main" class="main-content page-${page}">${content}</main><footer class="site-footer"><span>© ${new Date().getFullYear()} ${escape(config.author)} · ${escape(config.title)}</span><div><a href="${href('/rss.xml')}">RSS</a>${github ? `<a href="${github}" target="_blank" rel="noopener noreferrer">GitHub</a>` : ''}</div></footer></body></html>`;
 }

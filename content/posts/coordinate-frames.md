@@ -1,9 +1,9 @@
 ---
-title: 坐标变换第一课：同一个点，为什么有两组数字
+title: 坐标变换笔记：参考系与变换方向
 date: 2026-10-16
-category: 基础笔记
+category: 基础知识学习
 tags: 坐标系, 运动学, 数学基础
-summary: 从平移和旋转的二维例子理解参考坐标系、变换方向，以及验证计算的三个简单办法。
+summary: 用一个二维例子整理参考坐标系、旋转和平移，留下需要反复检查的方向约定。
 readingTime: 6
 featured: false
 draft: false

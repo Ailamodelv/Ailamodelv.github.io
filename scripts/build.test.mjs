@@ -78,6 +78,8 @@ test('configuration uses Pages origin and normalizes root and project paths', ()
   const config = normalizeConfig({ url: '', basePath: '/old' }, { BASE_PATH: '/robot-notes/', SITE_URL: 'https://learner.github.io/robot-notes/' });
   assert.equal(config.basePath, '/robot-notes');
   assert.equal(config.url, 'https://learner.github.io');
+  assert.throws(() => normalizeConfig({ categories: [{ slug: '../escape', title: '栏目' }] }, {}), /栏目/);
+  assert.throws(() => normalizeConfig({ categories: [{ slug: 'one', title: '栏目' }, { slug: 'two', title: '栏目' }] }, {}), /重复/);
 });
 
 async function fixture(t) {
@@ -146,11 +148,17 @@ test('RSS and sitemap escape XML special characters', () => {
 
 test('real templates resolve assets, article URLs, RSS, canonical links, and table of contents at root and project paths', async (t) => {
   const root = await fixture(t);
+  const configFile = path.join(root, 'site.config.json');
+  const fixtureConfig = JSON.parse(await fs.readFile(configFile, 'utf8'));
+  const { categories } = JSON.parse(await fs.readFile(path.join(projectRoot, 'site.config.json'), 'utf8'));
+  await fs.writeFile(configFile, JSON.stringify({ ...fixtureConfig, categories }));
+  const articleFile = path.join(root, 'content', 'posts', 'published.md');
+  await fs.writeFile(articleFile, (await fs.readFile(articleFile, 'utf8')).replace('title: 公开笔记', 'title: 公开笔记\ncategory: 基础知识学习'));
   await fs.cp(path.join(projectRoot, 'assets'), path.join(root, 'assets'), { recursive: true });
   await fs.appendFile(path.join(root, 'content', 'posts', 'published.md'), '\n\n![机器人示意图](/assets/robot.svg)\n\n| 参数 | 取值 |\n| --- | --- |\n| Kp | 20 |');
   for (const basePath of ['', '/robot-notes']) {
     const result = await build({ root, env: { BASE_PATH: basePath, SITE_URL: 'https://learner.github.io' }, renderer: actualRenderer });
-    const pageFiles = ['index.html', 'posts/index.html', 'roadmap/index.html', 'about/index.html', 'posts/published/index.html', '404.html'];
+    const pageFiles = ['index.html', 'posts/index.html', 'roadmap/index.html', 'about/index.html', 'posts/published/index.html', '404.html', ...categories.map(item => `categories/${item.slug}/index.html`)];
     for (const file of pageFiles) {
       const html = await fs.readFile(path.join(result.output, file), 'utf8');
       assert.ok(html.includes(`href="${basePath}/assets/favicon.svg"`), `${file}: favicon path`);
@@ -176,5 +184,16 @@ test('real templates resolve assets, article URLs, RSS, canonical links, and tab
     assert.ok(article.includes('id="起步"'));
     assert.ok(article.includes(`src="${basePath}/assets/robot.svg" alt="机器人示意图"`));
     assert.ok(article.includes('<table>'));
+    const basics = await fs.readFile(path.join(result.output, 'categories/fundamentals/index.html'), 'utf8');
+    const papers = await fs.readFile(path.join(result.output, 'categories/papers/index.html'), 'utf8');
+    const archive = await fs.readFile(path.join(result.output, 'posts/index.html'), 'utf8');
+    const sitemap = await fs.readFile(path.join(result.output, 'sitemap.xml'), 'utf8');
+    assert.ok(basics.includes('公开笔记'));
+    assert.ok(!papers.includes('公开笔记'));
+    assert.ok(papers.includes('这个栏目还没有记录。'));
+    for (const item of categories) {
+      assert.ok(archive.includes(`data-category="${item.title}"`));
+      assert.ok(sitemap.includes(`https://learner.github.io${basePath}/categories/${item.slug}/`));
+    }
   }
 });

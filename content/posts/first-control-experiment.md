@@ -1,9 +1,9 @@
 ---
-title: 第一次运动控制实验：先让一个关节走向目标
+title: 单关节控制：一份待执行的仿真实验记录
 date: 2026-10-16
-category: 实验计划
+category: 基础知识学习
 tags: 仿真, 反馈控制, 实验记录
-summary: 用单关节位置控制组织一次最小仿真实验，明确目标、变量和记录方式，为后续复盘留下依据。
+summary: 整理单关节反馈控制的基本关系，以及后续实验需要保存的参数、曲线和疑问。
 readingTime: 6
 featured: false
 draft: false

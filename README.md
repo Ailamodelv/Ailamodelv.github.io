@@ -1,13 +1,13 @@
 # 具身手记 · Embodied Notes
 
-记录人形机器人入门过程的中文个人博客。包括首页、笔记归档、学习路线、关于页面和文章详情，支持分类筛选、标题与正文搜索、RSS 订阅和代码复制。
+记录自己在人形机器人领域学习过程的个人博客。栏目为「基础知识学习」「文献分享」「debug 经历」「观点闲谈」，每个栏目都有独立页面，包括暂时没有文章的栏目。网站以按时间排列的个人记录为主，支持栏目筛选、标题与正文搜索、RSS 订阅和代码复制。
 
 博客是纯静态网站，使用 Node.js 标准库生成 HTML，不依赖数据库、后端服务或第三方构建包。文章以 Markdown 保存在仓库中，GitHub Actions 自动生成并发布到 GitHub Pages。
 
 - 博客地址：[具身手记](https://ailamodelv.github.io/)
 - 源码仓库：[Ailamodelv.github.io](https://github.com/Ailamodelv/Ailamodelv.github.io)
 
-初始文章均标注为「示例」，学习路线均为「待开始」。这些内容用于展示写作方式，请根据自己的真实经历修改后发布。
+初始文章均标注为「示例」，请根据自己的真实经历修改后发布。旧版学习计划的文件和网址仍保留，但不再作为首页或主导航的栏目。
 
 ## 直接在 GitHub 上更新
 
@@ -17,7 +17,7 @@
 2. 新文章使用 `my-first-note.md` 这样的英文文件名，将下方「写一篇笔记」中的模板复制进去。按自己的经历填写正文、日期、分类和标签。准备公开时设置 `draft: false`、`sample: false`。
 3. 点击 **Commit changes**，提交到 `main` 分支。到 [Actions](https://github.com/Ailamodelv/Ailamodelv.github.io/actions) 查看自动发布，绿色完成后刷新博客即可。
 
-博客名称、简介和署名都在 [`site.config.json`](https://github.com/Ailamodelv/Ailamodelv.github.io/blob/main/site.config.json)；学习路线在 [`content/roadmap.json`](https://github.com/Ailamodelv/Ailamodelv.github.io/blob/main/content/roadmap.json)。上传实验图片时，可放到 `assets/images/`，在文章中写 `![实验图片说明](/assets/images/文件名.png)`。
+博客名称、简介、署名和栏目设置都在 [`site.config.json`](https://github.com/Ailamodelv/Ailamodelv.github.io/blob/main/site.config.json)。上传实验图片时，可放到 `assets/images/`，在文章中写 `![实验图片说明](/assets/images/文件名.png)`。
 
 ## 本地运行
 
@@ -47,11 +47,10 @@ node --test scripts/*.test.mjs
 ---
 title: 我的第一次单关节仿真
 date: 2026-10-16
-category: 实验记录
+category: 基础知识学习
 tags: 仿真, 控制, 入门
 summary: 这次我设置了什么条件，观察到什么，以及还有什么没有理解。
 readingTime: 5
-featured: false
 draft: true
 sample: false
 ---
@@ -71,7 +70,9 @@ sample: false
 区分观察结果、个人推测和待验证的问题。
 ```
 
-将 `draft` 改为 `false` 即可在网站显示这篇文章；`draft: true` 仅从网站隐藏文章，公开仓库中仍可查看源文件。`featured: true` 可将文章优先展示在首页；`sample: true` 会显示示例标记；省略 `readingTime` 时会自动估算阅读时间。日期采用 `YYYY-MM-DD` 格式，标签用逗号分隔。
+将 `draft` 改为 `false` 即可在网站显示这篇文章；`draft: true` 仅从网站隐藏文章，公开仓库中仍可查看源文件。`sample: true` 会显示示例标记；省略 `readingTime` 时会自动估算阅读时间。日期采用 `YYYY-MM-DD` 格式，标签用逗号分隔。文章按日期倒序排列。
+
+`category` 必须与配置中的栏目名称完全一致。目前可填 `基础知识学习`、`文献分享`、`debug 经历`、`观点闲谈`。文献笔记可记录论文出处、阅读批注和疑问；debug 笔记可记录环境、报错、排查步骤、修复结果与遗留问题。栏目为空时会如实显示“这个栏目还没有记录”。
 
 支持标题、段落、无序列表、有序列表、引用、围栏代码块、行内代码、加粗、链接、图片和简单管道表格。原始 HTML 会显示为文字，暂不解析数学公式、合并表格单元格或嵌套列表。
 
@@ -88,7 +89,7 @@ sample: false
 
 表格需要表头及至少三个连字符的分隔行，每行列数保持一致。使用 `\|` 在单元格内写管道符；行内代码中的管道符会保留。
 
-学习路线位于 `content/roadmap.json`，可调整阶段说明、主题和预期产出。更改阶段状态前，请先确认页面模板支持该状态。
+旧版学习计划位于 `content/roadmap.json`，保留在 `/roadmap/` 供回看；新的学习计划和阶段复盘可直接写入「观点闲谈」。
 
 ## 修改博客信息
 
@@ -97,7 +98,7 @@ sample: false
 | 字段 | 用途 |
 | --- | --- |
 | `title` | 博客名称 |
-| `subtitle` | 英文副标题 |
+| `categories` | 栏目列表，每项含 `slug`（网址中的英文短名）、`title`（栏目名称）、`description`（说明） |
 | `description` | 博客简介 |
 | `author` | 作者署名 |
 | `github` | GitHub 用户名，例如 `octocat`，无则留空，不填写完整链接 |

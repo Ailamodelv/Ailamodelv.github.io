@@ -1,5 +1,6 @@
+document.documentElement.classList.add('js-enabled');
 const menu = document.querySelector('[data-menu]');
-const sidebar = document.querySelector('.sidebar');
+const sidebar = document.querySelector('.site-nav');
 menu?.addEventListener('click', () => {
   const expanded = menu.getAttribute('aria-expanded') === 'true';
   menu.setAttribute('aria-expanded', String(!expanded));
@@ -28,7 +29,7 @@ function filterPosts() {
     if (matches) visible++;
   });
   if (empty) empty.hidden = visible !== 0;
-  if (count) count.textContent = `${visible} 篇手记`;
+  if (count) count.textContent = `${visible} 篇记录`;
 }
 search?.addEventListener('input', filterPosts);
 filters.forEach(button => button.addEventListener('click', () => {

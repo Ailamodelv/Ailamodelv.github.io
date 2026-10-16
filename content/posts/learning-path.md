@@ -1,9 +1,9 @@
 ---
-title: 从哪里开始：给人形机器人学习画一张地图
+title: 学习计划：先把要弄清的问题记下来
 date: 2026-10-16
-category: 学习规划
+category: 观点闲谈
 tags: 入门路线, 学习方法, 人形机器人
-summary: 把庞大的人形机器人知识拆成四个可验证的小阶段，并为每次学习留下问题、证据与复盘。
+summary: 一份待调整的个人学习计划：先列出关心的问题，再随学习过程补充验证与复盘。
 readingTime: 5
 featured: true
 draft: false
