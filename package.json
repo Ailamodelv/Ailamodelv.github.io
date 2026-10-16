@@ -1,0 +1,14 @@
+{
+  "name": "embodied-notes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "记录人形机器人入门过程的个人静态博客",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "test": "node --test scripts/*.test.mjs"
+  }
+}

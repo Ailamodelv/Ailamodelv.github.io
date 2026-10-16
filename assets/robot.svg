@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 420" fill="none">
+  <defs><pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M26 0H0V26" stroke="#d9dfd2" stroke-width=".6"/></pattern></defs>
+  <rect width="460" height="420" fill="url(#grid)"/>
+  <circle cx="234" cy="203" r="137" stroke="#b3c2aa" stroke-dasharray="3 7"/>
+  <ellipse cx="235" cy="360" rx="103" ry="17" fill="#dfe5d2"/>
+  <g stroke="#234f42" stroke-width="2.2" stroke-linejoin="round">
+    <path d="M204 66h54l8 12v38l-15 12h-40l-15-12V78z" fill="#f1f3e9"/>
+    <path d="M209 81h43v23h-43z" fill="#244e42"/>
+    <path d="M217 91h8m11 0h8" stroke="#cbe18e" stroke-width="3"/>
+    <path d="M221 128v13h22v-13" fill="#ccd7c2"/>
+    <path d="M196 142l35-8 37 8 11 61-15 27h-65l-16-28z" fill="#e9eedf"/>
+    <path d="M208 152h46v47h-46z" fill="#d9e3cc"/>
+    <path d="M221 163h20v21h-20z" fill="#c2d68a"/>
+    <path d="M183 154l-23 13-9 52 18 5 26-52m84-18 23 13 9 52-18 5-26-52" fill="#f1f3e9"/>
+    <path d="M151 224l-9 52 14 10 12-8 7-50m136-4 9 52-14 10-12-8-7-50" fill="#d9e3cc"/>
+    <path d="M202 235h60l-1 25-29 10-29-10z" fill="#c3d0b6"/>
+    <path d="M206 266l-9 52 20 4 17-50m23-6 9 52-20 4-17-50" fill="#eef1e5"/>
+    <path d="M197 327l-9 28 32 3 1-29m45-2 9 28-32 3-1-29" fill="#d7e1c9"/>
+    <path d="M187 355l-10 8v8h44v-13m54-3 10 8v8h-44v-13" fill="#e9eedf"/>
+    <g fill="#b8cf7c"><circle cx="185" cy="156" r="9"/><circle cx="278" cy="156" r="9"/><circle cx="162" cy="225" r="8"/><circle cx="301" cy="225" r="8"/><circle cx="207" cy="324" r="8"/><circle cx="255" cy="324" r="8"/></g>
+    <path d="M232 208v38m-9-29 9-9 9 9m-9 21 35 13m-10-1 10 1-6-8" stroke="#729366" stroke-width="1.4"/>
+  </g>
+  <g stroke="#78906a" stroke-width="1"><path d="M106 90h54l36 16M310 225h48v-35M264 324h84v-35"/><circle cx="106" cy="90" r="3" fill="#78906a"/><path d="M52 344v-38m0 38h38m-38 0 21-20"/></g>
+  <g fill="#5a7051" font-family="monospace" font-size="9" letter-spacing="1"><text x="61" y="77">PERCEPTION</text><text x="321" y="180">ACTUATION</text><text x="309" y="280">BALANCE</text><text x="47" y="298">Z</text><text x="97" y="348">X</text><text x="78" y="320">Y</text><text x="270" y="45">FIG. 01 / HUMANOID</text><text x="272" y="401">A WORK IN PROGRESS</text></g>
+</svg>
