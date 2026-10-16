@@ -194,7 +194,7 @@ test('real templates resolve assets, article URLs, RSS, canonical links, and tab
     assert.ok(!papers.includes('公开笔记'));
     assert.ok(papers.includes('这个栏目还没有记录。'));
     for (const item of categories) {
-      assert.ok(archive.includes(`data-category="${item.title}"`));
+      assert.ok(archive.includes(`href="${basePath}/categories/${item.slug}/"`));
       assert.ok(sitemap.includes(`https://learner.github.io${basePath}/categories/${item.slug}/`));
     }
   }
