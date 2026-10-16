@@ -4,7 +4,20 @@
 
 博客是纯静态网站，使用 Node.js 标准库生成 HTML，不依赖数据库、后端服务或第三方构建包。文章以 Markdown 保存在仓库中，GitHub Actions 自动生成并发布到 GitHub Pages。
 
+- 博客地址：[具身手记](https://ailamodelv.github.io/)
+- 源码仓库：[Ailamodelv.github.io](https://github.com/Ailamodelv/Ailamodelv.github.io)
+
 初始文章均标注为「示例」，学习路线均为「待开始」。这些内容用于展示写作方式，请根据自己的真实经历修改后发布。
+
+## 直接在 GitHub 上更新
+
+日常写作可以完全通过 GitHub 网页完成，无需在电脑上安装编辑工具。
+
+1. 打开仓库的 [`content/posts/`](https://github.com/Ailamodelv/Ailamodelv.github.io/tree/main/content/posts) 目录。修改已有文章时，打开文件并点击铅笔图标；新建文章时，选择 **Add file → Create new file**。
+2. 新文章使用 `my-first-note.md` 这样的英文文件名，将下方「写一篇笔记」中的模板复制进去。按自己的经历填写正文、日期、分类和标签。准备公开时设置 `draft: false`、`sample: false`。
+3. 点击 **Commit changes**，提交到 `main` 分支。到 [Actions](https://github.com/Ailamodelv/Ailamodelv.github.io/actions) 查看自动发布，绿色完成后刷新博客即可。
+
+博客名称、简介和署名都在 [`site.config.json`](https://github.com/Ailamodelv/Ailamodelv.github.io/blob/main/site.config.json)；学习路线在 [`content/roadmap.json`](https://github.com/Ailamodelv/Ailamodelv.github.io/blob/main/content/roadmap.json)。上传实验图片时，可放到 `assets/images/`，在文章中写 `![实验图片说明](/assets/images/文件名.png)`。
 
 ## 本地运行
 
@@ -58,7 +71,7 @@ sample: false
 区分观察结果、个人推测和待验证的问题。
 ```
 
-将 `draft` 改为 `false` 即可公开这篇文章。`featured: true` 可将文章优先展示在首页；`sample: true` 会显示示例标记；省略 `readingTime` 时会自动估算阅读时间。日期采用 `YYYY-MM-DD` 格式，标签用逗号分隔。
+将 `draft` 改为 `false` 即可在网站显示这篇文章；`draft: true` 仅从网站隐藏文章，公开仓库中仍可查看源文件。`featured: true` 可将文章优先展示在首页；`sample: true` 会显示示例标记；省略 `readingTime` 时会自动估算阅读时间。日期采用 `YYYY-MM-DD` 格式，标签用逗号分隔。
 
 支持标题、段落、无序列表、有序列表、引用、围栏代码块、行内代码、加粗、链接、图片和简单管道表格。原始 HTML 会显示为文字，暂不解析数学公式、合并表格单元格或嵌套列表。
 
