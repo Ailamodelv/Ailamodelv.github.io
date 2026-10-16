@@ -2,7 +2,7 @@
 
 记录自己在人形机器人领域学习过程的个人博客。栏目为「基础知识学习」「文献分享」「debug 经历」「观点闲谈」，每个栏目都有独立页面，包括暂时没有文章的栏目。采用白底黑字、单栏排版，支持栏目浏览、标题与正文搜索、RSS 订阅和代码复制。
 
-**第一次写文章，请直接看 [写作指南](WRITING.md)。** 其中有逐步操作和可复制的模板，日常更新不需要运行命令。
+**第一次写文章，请直接看 [写作指南](WRITING.md)。** 直接写正文就能发布，不需要模板，也不需要运行命令。
 
 博客是纯静态网站，使用 Node.js 标准库生成 HTML，不依赖数据库、后端服务或第三方构建包。文章以 Markdown 保存在仓库中，GitHub Actions 自动生成并发布到 GitHub Pages。
 
@@ -16,7 +16,7 @@
 日常写作可以完全通过 GitHub 网页完成，无需在电脑上安装编辑工具。
 
 1. 打开仓库的 [`content/posts/`](https://github.com/Ailamodelv/Ailamodelv.github.io/tree/main/content/posts) 目录。修改已有文章时，打开文件并点击铅笔图标；新建文章时，选择 **Add file → Create new file**。
-2. 新文章使用 `my-first-note.md` 这样的英文文件名，将下方「写一篇笔记」中的模板复制进去。按自己的经历填写正文、日期、分类和标签。准备公开时设置 `draft: false`、`sample: false`。
+2. 文件名填写 `今天的学习记录.md`，直接写正文。支持中文、英文和空格；标题、日期和默认栏目会自动补齐。
 3. 点击 **Commit changes**，提交到 `main` 分支。到 [Actions](https://github.com/Ailamodelv/Ailamodelv.github.io/actions) 查看自动发布，绿色完成后刷新博客即可。
 
 博客名称、简介、署名和栏目设置都在 [`site.config.json`](https://github.com/Ailamodelv/Ailamodelv.github.io/blob/main/site.config.json)。上传实验图片时，可放到 `assets/images/`，在文章中写 `![实验图片说明](/assets/images/文件名.png)`。
@@ -43,7 +43,9 @@ node --test scripts/*.test.mjs
 
 ## 写一篇笔记
 
-在 `content/posts/` 下新建文件，例如 `my-first-simulation.md`。文件名使用小写英文字母、数字和连字符，会成为文章网址的一部分。
+在 `content/posts/` 下新建文件，例如 `今天的学习记录.md`，直接写正文即可。不需要开头设置：标题默认使用文件名（或正文开头的 `# 标题`），日期使用 Git 中该文件首次提交的日期，栏目默认为「观点闲谈」。本地未提交的文件暂用修改日期。文件名支持中文、英文和空格，会成为文章网址的一部分；空格和标点自动转为连字符，同名网址会提示冲突。
+
+下面是**可选**的完整设置示例，需要自定义时才填写其中的项目，也可以只保留 `category` 一行指定栏目：
 
 ```markdown
 ---

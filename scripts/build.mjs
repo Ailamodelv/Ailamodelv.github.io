@@ -1,10 +1,22 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { escapeHtml, normalizeBasePath, parseFrontmatter, renderMarkdown, withBasePath } from './markdown.mjs';
 
 export const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const runFile = promisify(execFile);
+
+async function firstPublishedDate(root, file) {
+  try {
+    const { stdout } = await runFile('git', ['log', '--follow', '--format=%aI', '--', `content/posts/${file}`], { cwd: root });
+    const first = stdout.trim().split('\n').filter(Boolean).at(-1);
+    if (first) return first.slice(0, 10);
+  } catch { /* An uncommitted local note can still be previewed. */ }
+  return (await fs.stat(path.join(root, 'content', 'posts', file))).mtime.toISOString().slice(0, 10);
+}
 
 export function normalizeConfig(raw, env = process.env) {
   const basePath = normalizeBasePath(env.BASE_PATH ?? raw.basePath ?? '');
@@ -24,21 +36,27 @@ export function normalizeConfig(raw, env = process.env) {
 
 export async function readPosts(root, config) {
   const postsDir = path.join(root, 'content', 'posts');
-  const files = (await fs.readdir(postsDir)).filter((name) => name.endsWith('.md')).sort();
+  const files = (await fs.readdir(postsDir)).filter((name) => /\.md$/i.test(name)).sort();
   const posts = [];
+  const slugs = new Map();
   for (const file of files) {
     const { attributes, body } = parseFrontmatter(await fs.readFile(path.join(postsDir, file), 'utf8'));
     if (attributes.draft === true) continue;
-    const slug = file.slice(0, -3);
-    if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) throw new Error(`文章文件名应使用小写英文字母、数字和连字符：${file}`);
-    if (!attributes.title || !/^\d{4}-\d{2}-\d{2}$/.test(attributes.date ?? '') || Number.isNaN(Date.parse(attributes.date)) || new Date(attributes.date).toISOString().slice(0, 10) !== attributes.date) {
-      throw new Error(`${file} 需要 title 和有效的 YYYY-MM-DD 日期。`);
+    const filename = file.slice(0, -3);
+    const slug = filename.normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '') || `note-${createHash('sha256').update(file).digest('hex').slice(0, 12)}`;
+    if (slugs.has(slug)) throw new Error(`${file} 与 ${slugs.get(slug)} 会生成同一个网址，请给其中一篇换个不同的文件名。`);
+    slugs.set(slug, file);
+    const title = attributes.title || body.trimStart().match(/^#\s+(.+?)(?:\s+#+)?\s*(?:\n|$)/)?.[1] || filename;
+    const date = attributes.date || await firstPublishedDate(root, file);
+    const category = attributes.category || (config.categories?.some(item => item.title === '观点闲谈') ? '观点闲谈' : config.categories?.[0]?.title || '学习笔记');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date) {
+      throw new Error(`${file} 的日期应为 YYYY-MM-DD，也可以删去 date 让网站自动填写。`);
     }
     const rendered = renderMarkdown(body, config);
-    if (config.categories?.length && !config.categories.some(item => item.title === attributes.category)) throw new Error(`${file} 的 category 必须使用 site.config.json 中的栏目名称。`);
+    if (config.categories?.length && !config.categories.some(item => item.title === category)) throw new Error(`${file} 的 category 必须使用 site.config.json 中的栏目名称。`);
     posts.push({
-      slug, title: attributes.title, date: attributes.date, category: attributes.category || '学习笔记',
-      tags: attributes.tags, summary: attributes.summary || `${rendered.plainText.slice(0, 100)}…`,
+      slug, title, date, category,
+      tags: attributes.tags || [], summary: attributes.summary || `${rendered.plainText.slice(0, 100)}…`,
       readingTime: Math.max(1, Number(attributes.readingTime) || Math.ceil(rendered.plainText.length / 400)),
       featured: attributes.featured === true, sample: attributes.sample === true,
       ...rendered, url: withBasePath(`/posts/${slug}/`, config.basePath),

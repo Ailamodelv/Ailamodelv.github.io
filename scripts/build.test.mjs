@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import { execFileSync } from 'node:child_process';
 import { build, normalizeConfig, makeRss, makeSitemap, projectRoot } from './build.mjs';
 import { escapeHtml, normalizeBasePath, parseFrontmatter, renderMarkdown, safeLink, safeImage } from './markdown.mjs';
 import { createPreviewServer } from './serve.mjs';
@@ -96,6 +97,40 @@ async function fixture(t) {
 }
 
 const fixtureRenderer = ({ page, config, posts, post }) => `<!doctype html><html><head><link rel="stylesheet" href="${config.basePath}/assets/style.css"></head><body><h1>${page}</h1><a href="${config.basePath}/posts/">全部笔记</a>${post?.html || posts.map((item) => `<a href="${item.url}">${escapeHtml(item.title)}</a>`).join('')}</body></html>`;
+
+test('plain notes accept Chinese and spaced filenames, infer metadata, and retain first publication dates', async (t) => {
+  const root = await fixture(t);
+  const file = path.join(root, 'content/posts/今天的 学习记录.md');
+  await fs.writeFile(file, '直接写正文，不需要模板。');
+  await fs.writeFile(path.join(root, 'content/posts/My first blog.MD'), '# 我自己的标题\n\n一段正文。');
+  await fs.writeFile(path.join(root, 'content/posts/只指定栏目.md'), '---\ncategory: 观点闲谈\n---\n\n只填写栏目也可以。');
+  await fs.writeFile(path.join(root, 'site.config.json'), JSON.stringify({ title: '笔记', categories: [{ slug: 'thoughts', title: '观点闲谈' }], url: 'https://learner.github.io' }));
+  const git = (args, date) => execFileSync('git', args, { cwd: root, env: { ...process.env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }, stdio: 'pipe' });
+  const firstDate = '2026-09-01T10:00:00+08:00';
+  git(['init'], firstDate);
+  git(['add', '.'], firstDate);
+  git(['-c', 'user.name=Test', '-c', 'user.email=test@example.com', '-c', 'commit.gpgsign=false', 'commit', '-m', 'Initial notes'], firstDate);
+  await fs.appendFile(file, '\n\n后来补充的内容。');
+  git(['add', '.'], firstDate);
+  git(['-c', 'user.name=Test', '-c', 'user.email=test@example.com', '-c', 'commit.gpgsign=false', 'commit', '-m', 'Edit note'], '2026-10-16T10:00:00+08:00');
+  const result = await build({ root, env: {}, renderer: fixtureRenderer });
+  const chinese = result.posts.find(post => post.slug === '今天的-学习记录');
+  assert.equal(chinese.title, '今天的 学习记录');
+  assert.equal(chinese.date, '2026-09-01');
+  assert.equal(chinese.category, '观点闲谈');
+  assert.deepEqual(chinese.tags, []);
+  assert.equal(result.posts.find(post => post.slug === 'my-first-blog').title, '我自己的标题');
+  assert.equal(result.posts.find(post => post.slug === '只指定栏目').date, '2026-09-01');
+  const server = createPreviewServer(result);
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  const response = await fetch(`http://127.0.0.1:${server.address().port}${chinese.url}`);
+  assert.equal(response.status, 200);
+  assert.ok((await response.text()).includes('直接写正文，不需要模板。'));
+  assert.ok((await fs.readFile(path.join(result.output, 'rss.xml'), 'utf8')).includes('今天的-学习记录'));
+  await fs.writeFile(path.join(root, 'content/posts/my-first-blog.md'), '另一个文件');
+  await assert.rejects(build({ root, env: {}, renderer: fixtureRenderer }), /同一个网址/);
+});
 
 for (const basePath of ['', '/robot-notes']) {
   test(`build generates all pages, RSS, and sitemap with basePath ${basePath || '/'}`, async (t) => {
