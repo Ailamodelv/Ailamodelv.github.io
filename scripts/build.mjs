@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { escapeHtml, normalizeBasePath, parseFrontmatter, renderMarkdown, withBasePath } from './markdown.mjs';
 
@@ -87,6 +88,11 @@ async function resetOutput(root) {
 export async function build({ root = projectRoot, env = process.env, renderer } = {}) {
   root = await fs.realpath(root);
   const config = normalizeConfig(JSON.parse(await fs.readFile(path.join(root, 'site.config.json'), 'utf8')), env);
+  const clientAssets = await Promise.all(['style.css', 'main.js', 'favicon.svg'].map(async name => {
+    try { return await fs.readFile(path.join(root, 'assets', name)); }
+    catch (error) { if (error.code === 'ENOENT') return Buffer.alloc(0); throw error; }
+  }));
+  config.assetVersion = createHash('sha256').update(Buffer.concat(clientAssets)).digest('hex').slice(0, 12);
   const posts = await readPosts(root, config);
   const roadmap = JSON.parse(await fs.readFile(path.join(root, 'content', 'roadmap.json'), 'utf8'));
   const renderPage = renderer ?? (await import(pathToFileURL(path.join(root, 'src', 'templates.mjs')).href)).renderPage;

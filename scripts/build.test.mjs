@@ -161,14 +161,16 @@ test('real templates resolve assets, article URLs, RSS, canonical links, and tab
     const pageFiles = ['index.html', 'posts/index.html', 'roadmap/index.html', 'about/index.html', 'posts/published/index.html', '404.html', ...categories.map(item => `categories/${item.slug}/index.html`)];
     for (const file of pageFiles) {
       const html = await fs.readFile(path.join(result.output, file), 'utf8');
-      assert.ok(html.includes(`href="${basePath}/assets/favicon.svg"`), `${file}: favicon path`);
+      assert.ok(html.includes(`href="${basePath}/assets/favicon.svg?v=${result.config.assetVersion}"`), `${file}: versioned favicon path`);
+      assert.ok(html.includes(`href="${basePath}/assets/style.css?v=${result.config.assetVersion}"`), `${file}: versioned stylesheet path`);
       assert.ok(html.includes(`href="${basePath}/rss.xml"`), `${file}: RSS path`);
       const route = file === 'index.html' ? '/' : file === '404.html' ? '/404.html' : `/${file.replace(/index\.html$/, '')}`;
       assert.ok(html.includes(`rel="canonical" href="https://learner.github.io${basePath}${route}"`), `${file}: canonical URL`);
       for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
         const url = match[1].replaceAll('&amp;', '&');
         if (/^https?:\/\//.test(url) || url.startsWith('mailto:')) continue;
-        const [pathname, anchor] = url.split('#');
+        const [pathWithQuery, anchor] = url.split('#');
+        const pathname = pathWithQuery.split('?')[0];
         if (!pathname) {
           assert.ok(html.includes(`id="${anchor}"`), `${file}: missing anchor ${anchor}`);
           continue;
