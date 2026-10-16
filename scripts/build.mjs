@@ -36,13 +36,13 @@ export function normalizeConfig(raw, env = process.env) {
 
 export async function readPosts(root, config) {
   const postsDir = path.join(root, 'content', 'posts');
-  const files = (await fs.readdir(postsDir)).filter((name) => /\.md$/i.test(name)).sort();
+  const files = (await fs.readdir(postsDir, { withFileTypes: true })).filter(entry => entry.isFile() && !entry.name.startsWith('.') && (!path.extname(entry.name) || /\.(md|txt)$/i.test(entry.name))).map(entry => entry.name).sort();
   const posts = [];
   const slugs = new Map();
   for (const file of files) {
     const { attributes, body } = parseFrontmatter(await fs.readFile(path.join(postsDir, file), 'utf8'));
     if (attributes.draft === true) continue;
-    const filename = file.slice(0, -3);
+    const filename = file.replace(/\.(md|txt)$/i, '');
     const slug = filename.normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '') || `note-${createHash('sha256').update(file).digest('hex').slice(0, 12)}`;
     if (slugs.has(slug)) throw new Error(`${file} 与 ${slugs.get(slug)} 会生成同一个网址，请给其中一篇换个不同的文件名。`);
     slugs.set(slug, file);

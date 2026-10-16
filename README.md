@@ -16,7 +16,7 @@
 日常写作可以完全通过 GitHub 网页完成，无需在电脑上安装编辑工具。
 
 1. 打开仓库的 [`content/posts/`](https://github.com/Ailamodelv/Ailamodelv.github.io/tree/main/content/posts) 目录。修改已有文章时，打开文件并点击铅笔图标；新建文章时，选择 **Add file → Create new file**。
-2. 文件名填写 `今天的学习记录.md`，直接写正文。支持中文、英文和空格；标题、日期和默认栏目会自动补齐。
+2. 文件名填写 `今天的学习记录.md`，直接写正文。支持中文、英文和空格，也支持 `.txt` 或没有后缀；标题、日期和默认栏目会自动补齐。
 3. 点击 **Commit changes**，提交到 `main` 分支。到 [Actions](https://github.com/Ailamodelv/Ailamodelv.github.io/actions) 查看自动发布，绿色完成后刷新博客即可。
 
 博客名称、简介、署名和栏目设置都在 [`site.config.json`](https://github.com/Ailamodelv/Ailamodelv.github.io/blob/main/site.config.json)。上传实验图片时，可放到 `assets/images/`，在文章中写 `![实验图片说明](/assets/images/文件名.png)`。

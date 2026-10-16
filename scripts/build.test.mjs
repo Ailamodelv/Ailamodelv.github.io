@@ -104,6 +104,8 @@ test('plain notes accept Chinese and spaced filenames, infer metadata, and retai
   await fs.writeFile(file, '直接写正文，不需要模板。');
   await fs.writeFile(path.join(root, 'content/posts/My first blog.MD'), '# 我自己的标题\n\n一段正文。');
   await fs.writeFile(path.join(root, 'content/posts/只指定栏目.md'), '---\ncategory: 观点闲谈\n---\n\n只填写栏目也可以。');
+  await fs.writeFile(path.join(root, 'content/posts/没有后缀'), '直接写文章。');
+  await fs.writeFile(path.join(root, 'content/posts/文本笔记.txt'), '纯文本也可以。');
   await fs.writeFile(path.join(root, 'site.config.json'), JSON.stringify({ title: '笔记', categories: [{ slug: 'thoughts', title: '观点闲谈' }], url: 'https://learner.github.io' }));
   const git = (args, date) => execFileSync('git', args, { cwd: root, env: { ...process.env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }, stdio: 'pipe' });
   const firstDate = '2026-09-01T10:00:00+08:00';
@@ -121,6 +123,8 @@ test('plain notes accept Chinese and spaced filenames, infer metadata, and retai
   assert.deepEqual(chinese.tags, []);
   assert.equal(result.posts.find(post => post.slug === 'my-first-blog').title, '我自己的标题');
   assert.equal(result.posts.find(post => post.slug === '只指定栏目').date, '2026-09-01');
+  assert.equal(result.posts.find(post => post.slug === '没有后缀').title, '没有后缀');
+  assert.equal(result.posts.find(post => post.slug === '文本笔记').title, '文本笔记');
   const server = createPreviewServer(result);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(() => new Promise(resolve => server.close(resolve)));
