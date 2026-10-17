@@ -9,7 +9,7 @@
 - 博客地址：[具身手记](https://xiaoyong-daydayup.github.io/)
 - 源码仓库：[xiaoyong-daydayup.github.io](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io)
 
-初始文章均标注为「示例」，请根据自己的真实经历修改后发布。旧版学习计划的文件和网址仍保留，但不再作为首页或主导航的栏目。
+博客仅展示正式记录。新的学习计划和阶段复盘可直接写入「观点闲谈」。
 
 ## 直接在 GitHub 上更新
 
@@ -93,7 +93,7 @@ sample: false
 
 表格需要表头及至少三个连字符的分隔行，每行列数保持一致。使用 `\|` 在单元格内写管道符；行内代码中的管道符会保留。
 
-旧版学习计划位于 `content/roadmap.json`，保留在 `/roadmap/` 供回看；新的学习计划和阶段复盘可直接写入「观点闲谈」。
+独立学习计划的数据位于 `content/roadmap.json`，当前为空；日常学习计划和阶段复盘可直接写入「观点闲谈」。
 
 ## 修改博客信息
 

@@ -54,6 +54,6 @@ category: 基础知识学习
 
 添加图片时，在 [assets 目录](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/tree/main/assets) 点击 **Add file → Upload files** 上传，再在正文中写 `![图片说明](/assets/my-experiment.png)`，替换成实际图片文件名。图片文件名建议用英文且不含空格。
 
-如果想暂时隐藏文章，可以在开头设置 `draft: true`；这只会从博客隐藏，公开仓库里的文件仍可见。修改原来的示例文章时，将 `sample: true` 改为 `sample: false`，即可去掉示例标记。
+如果想暂时隐藏文章，可以在开头设置 `draft: true`；这只会从博客隐藏，公开仓库里的文件仍可见。
 
 也可以把原始笔记发到当前聊天并说明“发布到博客”，由我帮你发布。
