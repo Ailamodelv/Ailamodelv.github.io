@@ -6,8 +6,8 @@
 
 博客是纯静态网站，使用 Node.js 标准库生成 HTML，不依赖数据库、后端服务或第三方构建包。文章以 Markdown 保存在仓库中，GitHub Actions 自动生成并发布到 GitHub Pages。
 
-- 博客地址：[具身手记](https://ailamodelv.github.io/)
-- 源码仓库：[Ailamodelv.github.io](https://github.com/Ailamodelv/Ailamodelv.github.io)
+- 博客地址：[具身手记](https://xiaoyong-daydayup.github.io/)
+- 源码仓库：[xiaoyong-daydayup.github.io](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io)
 
 初始文章均标注为「示例」，请根据自己的真实经历修改后发布。旧版学习计划的文件和网址仍保留，但不再作为首页或主导航的栏目。
 
@@ -15,11 +15,11 @@
 
 日常写作可以完全通过 GitHub 网页完成，无需在电脑上安装编辑工具。
 
-1. 打开仓库的 [`content/posts/`](https://github.com/Ailamodelv/Ailamodelv.github.io/tree/main/content/posts) 目录。修改已有文章时，打开文件并点击铅笔图标；新建文章时，选择 **Add file → Create new file**。
+1. 打开仓库的 [`content/posts/`](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/tree/main/content/posts) 目录。修改已有文章时，打开文件并点击铅笔图标；新建文章时，选择 **Add file → Create new file**。
 2. 文件名填写 `今天的学习记录.md`，直接写正文。支持中文、英文和空格，也支持 `.txt` 或没有后缀；标题、日期和默认栏目会自动补齐。
-3. 点击 **Commit changes**，提交到 `main` 分支。到 [Actions](https://github.com/Ailamodelv/Ailamodelv.github.io/actions) 查看自动发布，绿色完成后刷新博客即可。
+3. 点击 **Commit changes**，提交到 `main` 分支。到 [Actions](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/actions) 查看自动发布，绿色完成后刷新博客即可。
 
-博客名称、简介、署名和栏目设置都在 [`site.config.json`](https://github.com/Ailamodelv/Ailamodelv.github.io/blob/main/site.config.json)。上传实验图片时，可放到 `assets/images/`，在文章中写 `![实验图片说明](/assets/images/文件名.png)`。
+博客名称、简介、署名和栏目设置都在 [`site.config.json`](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/blob/main/site.config.json)。上传实验图片时，可放到 `assets/images/`，在文章中写 `![实验图片说明](/assets/images/文件名.png)`。
 
 ## 本地运行
 

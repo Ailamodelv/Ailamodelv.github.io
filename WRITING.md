@@ -4,9 +4,9 @@
 
 ## 三步发布
 
-1. 登录 GitHub，点击 [新建文章](https://github.com/Ailamodelv/Ailamodelv.github.io/new/main/content/posts)。
+1. 登录 GitHub，点击 [新建文章](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/new/main/content/posts)。
 2. 文件名填写 `今天的学习记录.md`，在下面直接写内容。中文、英文和空格都可以，每篇用不同的文件名。推荐 `.md` 后缀，也支持 `.txt` 或没有后缀。
-3. 点击 **Commit changes**，提交到 `main`。等 [发布状态](https://github.com/Ailamodelv/Ailamodelv.github.io/actions/workflows/deploy.yml) 显示绿色勾，再打开 [博客](https://ailamodelv.github.io/)。
+3. 点击 **Commit changes**，提交到 `main`。等 [发布状态](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/actions/workflows/deploy.yml) 显示绿色勾，再打开 [博客](https://xiaoyong-daydayup.github.io/)。
 
 例如，你可以只写：
 
@@ -41,7 +41,7 @@ category: 基础知识学习
 
 ## 修改已有文章
 
-打开 [文章目录](https://github.com/Ailamodelv/Ailamodelv.github.io/tree/main/content/posts)，点进文件，再点铅笔图标。改好后点击 **Commit changes**，网站会自动更新。
+打开 [文章目录](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/tree/main/content/posts)，点进文件，再点铅笔图标。改好后点击 **Commit changes**，网站会自动更新。
 
 ## 想排版时再用 Markdown
 
@@ -52,7 +52,7 @@ category: 基础知识学习
 - 加粗：`**需要强调的内容**`
 - 链接：`[论文名称](https://论文地址)`
 
-添加图片时，在 [assets 目录](https://github.com/Ailamodelv/Ailamodelv.github.io/tree/main/assets) 点击 **Add file → Upload files** 上传，再在正文中写 `![图片说明](/assets/my-experiment.png)`，替换成实际图片文件名。图片文件名建议用英文且不含空格。
+添加图片时，在 [assets 目录](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/tree/main/assets) 点击 **Add file → Upload files** 上传，再在正文中写 `![图片说明](/assets/my-experiment.png)`，替换成实际图片文件名。图片文件名建议用英文且不含空格。
 
 如果想暂时隐藏文章，可以在开头设置 `draft: true`；这只会从博客隐藏，公开仓库里的文件仍可见。修改原来的示例文章时，将 `sample: true` 改为 `sample: false`，即可去掉示例标记。
 
