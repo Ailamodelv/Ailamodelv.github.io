@@ -141,3 +141,34 @@ p { margin-bottom: 20px; }
   .prose pre { white-space: pre-wrap; }
   .prose pre code { color: #222; }
 }
+
+/* Article reading layout and original UI screenshots. */
+.article-deck { max-width: 58ch; margin: 14px 0 20px; color: var(--muted); font-size: 15px; line-height: 1.95; }
+.page-post .article-heading { padding-bottom: 25px; border-bottom: 1px solid var(--line); }
+.page-post .toc { margin-top: -5px; border-top: 0; }
+.page-post .prose > h2 { padding-top: 15px; border-top: 1px solid var(--line); margin-top: 52px; font-size: 22px; }
+.article-figure { margin: 30px 0 34px; padding: 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.prose .article-figure a { display: block; text-decoration: none; cursor: zoom-in; }
+.prose .article-figure img { width: 100%; margin: 0; border-radius: 3px; }
+.article-figure figcaption { margin-top: 12px; padding: 0 3px 2px; color: var(--muted); font-size: 12px; line-height: 1.85; }
+.prose a[href*="/assets/downloads/"] { display: inline-flex; align-items: center; gap: 12px; padding: 11px 17px; margin: 3px 0; border: 1px solid #527b5c; border-radius: 4px; background: #1d3023; color: var(--accent); font-size: 14px; text-decoration: none; }
+.prose a[href*="/assets/downloads/"]::after { content: '↓'; font-family: var(--mono); }
+.prose a[href*="/assets/downloads/"]:hover { background: #294331; border-color: var(--accent); }
+.toc[open] nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 22px; }
+.toc a { overflow-wrap: anywhere; }
+.prose pre code[class*="language-"]::before { display: block; margin-bottom: 12px; color: var(--muted); font: 10px/1.4 var(--mono); letter-spacing: .5px; }
+.prose pre code.language-bash::before { content: 'BASH / LINUX'; }
+.prose pre code.language-powershell::before { content: 'POWERSHELL / WINDOWS'; }
+.prose pre code.language-json::before { content: 'JSON'; }
+.prose pre code.language-text::before { content: 'WORKFLOW'; }
+@media (max-width: 600px) {
+  .article-deck { font-size: 13px; }
+  .page-post .prose > h2 { font-size: 20px; margin-top: 38px; }
+  .article-figure { margin-inline: -8px; padding: 6px; }
+  .article-figure figcaption { font-size: 11px; padding: 0 5px 4px; }
+  .toc[open] nav { grid-template-columns: 1fr; }
+}
+@media print {
+  .article-figure { break-inside: avoid; }
+  .prose a[href*="/assets/downloads/"] { color: #214e30; background: #fff; }
+}

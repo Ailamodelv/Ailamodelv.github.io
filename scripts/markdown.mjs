@@ -126,6 +126,14 @@ export function renderMarkdown(source, { basePath = '' } = {}) {
   while (i < lines.length) {
     const line = lines[i];
     if (!line.trim()) { i++; continue; }
+    const figure = line.match(/^!\[([^\]\n]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)\s*$/);
+    if (figure) {
+      const src = safeImage(figure[2], basePath);
+      if (src) {
+        html.push(`<figure class="article-figure"><a href="${escapeHtml(src)}" target="_blank" rel="noopener noreferrer" aria-label="查看原图：${escapeHtml(figure[1])}">${renderInline(line, basePath)}</a>${figure[3] ? `<figcaption>${escapeHtml(figure[3])}</figcaption>` : ''}</figure>`);
+        i++; continue;
+      }
+    }
     const fence = line.match(/^```([\w+-]*)\s*$/);
     if (fence) {
       const code = []; i++;

@@ -72,6 +72,15 @@ test('Markdown pipe tables preserve inline code, escaped pipes, alignment and HT
   assert.ok(!renderMarkdown('| A | B |\n| unsafe | --- |').html.includes('<table>'));
 });
 
+test('standalone screenshots show escaped captions and safe original-image links', () => {
+  const { html } = renderMarkdown('![工作台](/assets/main.png "图 1 · <主界面>")\n\n![危险](javascript:alert "错误")', { basePath: '/notes' });
+  assert.ok(html.includes('<figure class="article-figure">'));
+  assert.ok(html.includes('href="/notes/assets/main.png" target="_blank" rel="noopener noreferrer"'));
+  assert.ok(html.includes('<figcaption>图 1 · &lt;主界面&gt;</figcaption>'));
+  assert.equal((html.match(/<img /g) || []).length, 1);
+  assert.ok(!html.includes('href="javascript:'));
+});
+
 test('configuration uses Pages origin and normalizes root and project paths', () => {
   assert.equal(normalizeBasePath('/'), '');
   assert.equal(normalizeBasePath('notes/'), '/notes');
