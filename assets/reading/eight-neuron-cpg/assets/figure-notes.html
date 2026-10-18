@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>图件与数据说明</title>
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<style>
+:root{color-scheme:light;--ink:#243242;--muted:#647387;--line:#dbe3ea;--accent:#166278;--paper:#fff;--wash:#f3f5f7}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--wash);color:var(--ink);font:17px/1.9 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;text-rendering:optimizeLegibility;overflow-wrap:break-word}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid #4098af;outline-offset:3px}
+.reading-nav{position:sticky;top:0;z-index:10;background:#fffffff5;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.nav-inner{max-width:980px;margin:auto;min-height:56px;padding:10px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;line-height:1.5}
+.nav-brand{font-weight:700;letter-spacing:.04em;color:#39576c;white-space:nowrap}
+.nav-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 18px}
+.nav-links a{text-decoration:none}
+.paper-shell{max-width:980px;margin:30px auto 60px;padding:46px 40px 60px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 30px #273a5010}
+article{max-width:900px;margin:auto;min-width:0}
+article>:first-child{margin-top:0}
+h1,h2,h3,h4{color:#182c3c;font-weight:700;line-height:1.5;overflow-wrap:anywhere;scroll-margin-top:80px}
+h1{font-size:32px;letter-spacing:-.025em;margin:0 0 26px;line-height:1.55}
+h2{font-size:25px;margin:54px 0 18px;padding-bottom:10px;border-bottom:2px solid #e2e9ee}
+h3{font-size:20px;margin:30px 0 14px}
+h4{font-size:18px;margin:25px 0 12px}
+p{margin:15px 0}
+strong{font-weight:700;color:#182d3e}
+ul,ol{margin:16px 0;padding-left:1.6em}
+li{margin:6px 0}
+li>ul,li>ol{margin:8px 0}
+li p{margin:8px 0}
+blockquote{margin:22px 0;padding:12px 20px;border-left:4px solid #82aeba;background:#f0f6f8;color:#354d60;border-radius:0 6px 6px 0}
+blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}
+hr{border:0;border-top:1px solid var(--line);margin:38px 0}
+img{display:block;max-width:100%;height:auto;margin:24px auto;border-radius:5px}
+figure{max-width:100%;margin:24px 0}
+figcaption{font-size:14px;color:var(--muted);line-height:1.7;text-align:center;margin-top:10px}
+.table-scroll{width:100%;max-width:100%;overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:7px;scrollbar-width:thin}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.8;margin:0}
+thead{background:#edf3f6;color:#234154}
+th,td{vertical-align:top;text-align:left;padding:11px 14px;border-right:1px solid #e0e6eb;border-bottom:1px solid #e0e6eb;min-width:105px;max-width:440px}
+th:last-child,td:last-child{border-right:0}
+tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafcfd}
+table .math-inline{max-width:none;overflow:visible}
+pre{max-width:100%;overflow:auto;padding:20px 22px;border:1px solid #dbe3eb;border-radius:7px;background:#f3f6f9;font:13px/1.75 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;tab-size:4}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.86em;background:#edf2f6;padding:.15em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+.math-inline{display:inline-flex;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;line-height:normal;padding-block:2px}
+.math-display{max-width:100%;overflow-x:auto;overflow-y:hidden;margin:22px 0;padding:3px 8px;scrollbar-width:thin}
+.math-display .katex-display{margin:.25em 0;text-align:left}
+.math-display .katex-display>.katex{display:block;width:max-content;min-width:100%;text-align:center}
+.table-scroll,.math-display,.math-inline{position:relative}
+.katex{font-size:1.03em}
+article a[id]{scroll-margin-top:80px}
+.article-footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--muted);font-size:13px}
+@media(max-width:700px){body{font-size:16px;line-height:1.85}.paper-shell{margin:0;padding:28px 20px 44px;border:0;border-radius:0;box-shadow:none}.nav-inner{padding:10px 20px}.nav-brand{font-size:12px}h1{font-size:26px}h2{font-size:22px;margin-top:40px}h3{font-size:19px}blockquote{padding:10px 14px}th,td{padding:9px 11px;min-width:108px}.math-display{padding-inline:0}pre{padding:15px;font-size:12px}}
+@media(max-width:380px){body{font-size:15px}.paper-shell{padding:22px 15px 36px}.nav-inner{padding:10px 15px;gap:8px}.nav-links{gap:6px 11px}h1{font-size:24px}h2{font-size:21px}ul,ol{padding-left:1.35em}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:#fff;font-size:11pt;line-height:1.65}.reading-nav{display:none}.paper-shell{max-width:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none}h1{font-size:23pt}h2{font-size:17pt;break-after:avoid}h3{font-size:14pt;break-after:avoid}img,figure,blockquote{break-inside:avoid}.table-scroll{overflow:visible;font-size:9pt}.math-display{overflow:visible}a{color:inherit}.article-footer{display:none}}
+</style>
+</head>
+<body id="top">
+<nav class="reading-nav" aria-label="阅读导航"><div class="nav-inner"><span class="nav-brand">文献精读</span><div class="nav-links"><a href="../index.html">返回正文</a><a href="figure-notes.md" download>Markdown 源文</a></div></div></nav>
+<main class="paper-shell"><article><h1>图件与数据说明</h1>
+<p>这些图为本文自行绘制的教学图或数值重算图，没有复制论文原图。静态图同时提供 PNG 和 SVG；SVG 中的文字已转为路径，不依赖阅读设备安装中文字体。交互页面位于 <code>../interactive/</code>，包含所需脚本和数据，可直接双击打开，无需网络或本地服务器。</p>
+<h2>逐图来源</h2>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>图件</th>
+<th>性质</th>
+<th>内容与范围</th>
+<th>对应交互页</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>01-single-node-rhythm</code></td>
+<td>孤立节点教学算例</td>
+<td>Stein 单节点方程展开为 <code>dx/dt=10[r−x]</code>、<code>dy/dt=x−10y</code>、<code>dz/dt=x−30z</code>、<code>r=sigmoid(40−2000y+2000z)</code>；没有节点耦合。原始 <code>x,y,z</code> 被明确缩放为 <code>X=x,Y=10y,Z=30z</code>；不是关节角</td>
+<td><code>single-neuron-rhythm.html</code></td>
+</tr>
+<tr>
+<td><code>02-gait-phase</code></td>
+<td>理想时序示意</td>
+<td>标出由正文提前量换算得到的峰值延迟；交互页使用余弦曲线。没有数值求解 CPG，也没有编码支撑占空比或实测触地事件</td>
+<td><code>gait-phase-rhythms.html</code></td>
+</tr>
+<tr>
+<td><code>03-joint-targets</code></td>
+<td>数值重算</td>
+<td>完整八节点 Walk 网络 + 作者公开 MLP 权重；左后腿，步幅指令 1；每 2 ms 输出髋、膝两个标量目标</td>
+<td><code>joint-target-step.html</code></td>
+</tr>
+<tr>
+<td><code>04-hip-knee-pair</code></td>
+<td>同一数值重算的另一种表示</td>
+<td>取 130 个连续采样点，展示约一个周期中的同时刻髋膝目标角对；不强制闭合首尾点</td>
+<td><code>hip-knee-pairing.html</code></td>
+</tr>
+<tr>
+<td><code>05-ik-branches</code></td>
+<td>教学几何例子</td>
+<td>两个长度均为 1 的刚性杆，目标 <code>(1,1)</code>；两组完整逆解及两种交叉组合；不是 Go1 的角度定义、限位或真实腿轨迹</td>
+<td><code>ik-branch-pairing.html</code></td>
+</tr>
+<tr>
+<td><code>06-full-network-rhythm</code></td>
+<td>完整网络数值重算</td>
+<td>八个节点（24 个状态）同时积分后，显示节点 1 的 <code>x,r,10y,30z</code>；Walk。与孤立单节点教学图明确区分</td>
+<td><code>chasing-oscillation.html</code></td>
+</tr>
+</tbody></table>
+</div>
+<h2>提前量与峰值延迟的约定</h2>
+<p>正文沿用 <code>xi(t)=x1(t+φiT)</code>，正 <code>φi</code> 表示提前。图 02 与对应交互页的横轴是事件时间，峰值延迟为 <code>di=(−φi) mod 1</code>。Walk 的提前量 <code>[LH,RH,RF,LF]=[0,1/2,1/4,3/4]</code>，因此峰值依次位于 <code>[0,1/2,3/4,1/4]</code> 个周期。交互曲线使用 <code>0.5+0.5cos[2π(t/T−di)]</code>。其余四种步态的 0 或半周期取值在变换下不变。</p>
+<h2>完整网络重算的设置</h2>
+<ul>
+<li>来源：Liu et al. (2025) 论文方程与参数表；作者公开代码固定版本 <code>cef012f12fed7316e307034d48f9c13df909de15</code>。</li>
+<li>八节点状态一起采用 RK4 积分，积分步长 <code>0.0001 s</code>，总计算时间 <code>12 s</code>。</li>
+<li>节点 1 图示时间为 <code>10.5929–11.3689 s</code>，通常每 <code>0.0005 s</code> 取一个绘图点，另保留部分事件点。</li>
+<li>这是启动约 10 s 后的周期运动片段，仍有微小逐周期变化；没有宣称获得完全相同的严格限环或完成物理机器人复现。</li>
+<li><code>r = sigmoid(fc - 2000y + 2000z)</code> 是中间计算量。<code>X=x,Y=10y,Z=30z</code> 只是用于同轴比较的变量缩放。</li>
+<li>交互图中的“固定 <code>r=0.8</code>”是另外定义的教学对照，不是论文正常八节点网络的控制设定。</li>
+</ul>
+<h2>目标角数据的含义</h2>
+<ul>
+<li>数据文件：<code>data/joint-targets.json</code>，388 行，绝对时间 <code>10.594–11.368 s</code>，相邻控制样本间隔 <code>0.002 s</code>。</li>
+<li>原始列 <code>xd1,xd5</code> 为各节点最近一个 RK4 积分步的 <code>x</code> 有限差分，尚未除以 50。送入 MLP 的最后一个输入特征为该值 <code>/50</code>。</li>
+<li>髋身份 <code>[0,1,0]</code>、膝身份 <code>[1,1,0]</code>；Walk 编码 <code>[1,0,0,0,0]</code>；步幅指令取 <code>1.0</code>。</li>
+<li>使用作者公开的 <code>best_model_v1.2.pt</code> 计算，网络为 <code>11→24→12→1</code>。本包不包含该权重或作者原始源代码。</li>
+<li>原作者公开推理脚本中有步幅 <code>0.8</code> 的硬编码；本教学重算有意使用 <code>1.0</code>，因此不是未经改动运行那个脚本所得的录像复现。</li>
+<li><code>qhip_rad,qknee_rad</code> 为网络输出的弧度值；<code>qhip_deg,qknee_deg</code> 仅用于阅读展示。</li>
+<li>所有这些角度都是目标角，不是实测角，也不是已公开的训练标签。图中没有表示足端轨迹真实跟踪误差。</li>
+</ul>
+<h3>相同髋角的两个交点</h3>
+<p>在相邻的 2 ms 样本之间作线性插值：</p>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>交点</th>
+<th align="right">绝对时间 / s</th>
+<th align="right">髋目标角 / °</th>
+<th align="right">膝目标角 / °</th>
+<th>髋角趋势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td align="right">10.658629</td>
+<td align="right">60</td>
+<td align="right">-123.7378</td>
+<td>增大</td>
+</tr>
+<tr>
+<td>B</td>
+<td align="right">10.813907</td>
+<td align="right">60</td>
+<td align="right">-134.9097</td>
+<td>减小</td>
+</tr>
+</tbody></table>
+</div>
+<p>膝角相差约 <code>11.1719°</code>。这不是在两个插值时刻重新运行 MLP 的精确推理结果；它是已计算角度序列的线性插值。</p>
+<h2>孤立节点教学数据</h2>
+<p><code>data/single-node.json</code> 保留此前教学图使用的单节点数据。初态为 <code>(1,0.04,0.016)</code>，图示时间 <code>8.000–8.496 s</code>，输出采样间隔 <code>0.001 s</code>。保留的数据没有记录原始积分器，因而没有把这组孤立节点数据标为 RK4；RK4 说明仅适用于上述完整八节点重算。</p>
+<h2>重绘与许可</h2>
+<p><code>build-figures.py</code> 从三个随包 JSON 数据文件重绘六张静态图。需要 Python 3、NumPy、Matplotlib 和中文字体。省略 <code>--font</code> 时自动选择包含所需字符的系统中文字体；未找到时给出提示并停止，不会生成乱码图。数据读取与输出都相对脚本自身目录定位，可从任意工作目录运行：</p>
+<pre><code class="language-bash">python assets/build-figures.py --font /path/to/chinese-font.ttf
+</code></pre>
+<p>交互页面由已有教学可视化导出，并去除宿主环境桥接代码。各页独立内联所需 D3 7.9.0；第三方库采用 ISC 许可证，见 <code>../vendor/d3-LICENSE.txt</code>。页面不依赖 ChatGPT、外部 CDN、接口调用、身份或登录会话。</p>
+<p>原始参考来源：<a href="https://doi.org/10.1177/02783649251364286">论文 DOI</a>；<a href="https://github.com/ImDipsy/cpg_go1_simulation/tree/cef012f12fed7316e307034d48f9c13df909de15">作者代码固定版本</a>。</p>
+<footer class="article-footer"><a href="#top">回到本页开头</a> · <a href="../index.html">返回正文</a></footer></article></main>
+</body>
+</html>

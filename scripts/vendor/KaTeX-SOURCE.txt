@@ -1,0 +1,6 @@
+KaTeX 0.16.22, MIT license. Vendored minified CommonJS build for static math rendering.
+Source: https://registry.npmjs.org/katex/-/katex-0.16.22.tgz
+Verified against the registry SHA-512 integrity value before extraction.
+Browser CSS and WOFF2 fonts: assets/vendor/katex (matching 0.16.22).
+API: https://katex.org/docs/api
+Untrusted TeX: trust=false, maxExpand=1000, maxSize=20; no shared macros.

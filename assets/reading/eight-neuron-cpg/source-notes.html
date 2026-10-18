@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>来源、实现核查与复现范围</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<style>
+:root{color-scheme:light;--ink:#243242;--muted:#647387;--line:#dbe3ea;--accent:#166278;--paper:#fff;--wash:#f3f5f7}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--wash);color:var(--ink);font:17px/1.9 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;text-rendering:optimizeLegibility;overflow-wrap:break-word}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid #4098af;outline-offset:3px}
+.reading-nav{position:sticky;top:0;z-index:10;background:#fffffff5;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.nav-inner{max-width:980px;margin:auto;min-height:56px;padding:10px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;line-height:1.5}
+.nav-brand{font-weight:700;letter-spacing:.04em;color:#39576c;white-space:nowrap}
+.nav-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 18px}
+.nav-links a{text-decoration:none}
+.paper-shell{max-width:980px;margin:30px auto 60px;padding:46px 40px 60px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 30px #273a5010}
+article{max-width:900px;margin:auto;min-width:0}
+article>:first-child{margin-top:0}
+h1,h2,h3,h4{color:#182c3c;font-weight:700;line-height:1.5;overflow-wrap:anywhere;scroll-margin-top:80px}
+h1{font-size:32px;letter-spacing:-.025em;margin:0 0 26px;line-height:1.55}
+h2{font-size:25px;margin:54px 0 18px;padding-bottom:10px;border-bottom:2px solid #e2e9ee}
+h3{font-size:20px;margin:30px 0 14px}
+h4{font-size:18px;margin:25px 0 12px}
+p{margin:15px 0}
+strong{font-weight:700;color:#182d3e}
+ul,ol{margin:16px 0;padding-left:1.6em}
+li{margin:6px 0}
+li>ul,li>ol{margin:8px 0}
+li p{margin:8px 0}
+blockquote{margin:22px 0;padding:12px 20px;border-left:4px solid #82aeba;background:#f0f6f8;color:#354d60;border-radius:0 6px 6px 0}
+blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}
+hr{border:0;border-top:1px solid var(--line);margin:38px 0}
+img{display:block;max-width:100%;height:auto;margin:24px auto;border-radius:5px}
+figure{max-width:100%;margin:24px 0}
+figcaption{font-size:14px;color:var(--muted);line-height:1.7;text-align:center;margin-top:10px}
+.table-scroll{width:100%;max-width:100%;overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:7px;scrollbar-width:thin}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.8;margin:0}
+thead{background:#edf3f6;color:#234154}
+th,td{vertical-align:top;text-align:left;padding:11px 14px;border-right:1px solid #e0e6eb;border-bottom:1px solid #e0e6eb;min-width:105px;max-width:440px}
+th:last-child,td:last-child{border-right:0}
+tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafcfd}
+table .math-inline{max-width:none;overflow:visible}
+pre{max-width:100%;overflow:auto;padding:20px 22px;border:1px solid #dbe3eb;border-radius:7px;background:#f3f6f9;font:13px/1.75 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;tab-size:4}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.86em;background:#edf2f6;padding:.15em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+.math-inline{display:inline-flex;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;line-height:normal;padding-block:2px}
+.math-display{max-width:100%;overflow-x:auto;overflow-y:hidden;margin:22px 0;padding:3px 8px;scrollbar-width:thin}
+.math-display .katex-display{margin:.25em 0;text-align:left}
+.math-display .katex-display>.katex{display:block;width:max-content;min-width:100%;text-align:center}
+.table-scroll,.math-display,.math-inline{position:relative}
+.katex{font-size:1.03em}
+article a[id]{scroll-margin-top:80px}
+.article-footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--muted);font-size:13px}
+@media(max-width:700px){body{font-size:16px;line-height:1.85}.paper-shell{margin:0;padding:28px 20px 44px;border:0;border-radius:0;box-shadow:none}.nav-inner{padding:10px 20px}.nav-brand{font-size:12px}h1{font-size:26px}h2{font-size:22px;margin-top:40px}h3{font-size:19px}blockquote{padding:10px 14px}th,td{padding:9px 11px;min-width:108px}.math-display{padding-inline:0}pre{padding:15px;font-size:12px}}
+@media(max-width:380px){body{font-size:15px}.paper-shell{padding:22px 15px 36px}.nav-inner{padding:10px 15px;gap:8px}.nav-links{gap:6px 11px}h1{font-size:24px}h2{font-size:21px}ul,ol{padding-left:1.35em}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:#fff;font-size:11pt;line-height:1.65}.reading-nav{display:none}.paper-shell{max-width:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none}h1{font-size:23pt}h2{font-size:17pt;break-after:avoid}h3{font-size:14pt;break-after:avoid}img,figure,blockquote{break-inside:avoid}.table-scroll{overflow:visible;font-size:9pt}.math-display{overflow:visible}a{color:inherit}.article-footer{display:none}}
+</style>
+</head>
+<body id="top">
+<nav class="reading-nav" aria-label="阅读导航"><div class="nav-inner"><span class="nav-brand">文献精读</span><div class="nav-links"><a href="index.html">返回正文</a><a href="source-notes.md" download>Markdown 源文</a></div></div></nav>
+<main class="paper-shell"><article><h1>来源、实现核查与复现范围</h1>
+<p>这份附录说明正文中的结论来自哪里，以及哪些环节尚不能由公开材料完整复现。它不是对整套机器人实验的独立复现报告。</p>
+<h2>1. 核查对象</h2>
+<p><strong>原论文：</strong> Liu, Y., Liu, X., Wang, D., Yang, W., &amp; Qu, S. <em>An eight-neuron network for quadruped locomotion with hip-knee joint control</em>. <a href="https://doi.org/10.1177/02783649251364286">DOI:10.1177/02783649251364286</a>。</p>
+<p>方法、表格和附录核查使用 26 页的 online-first 全文，其出版日期为 2025 年 8 月 26 日。该文后来编入 2026 年 <em>The International Journal of Robotics Research</em> 45(4):602–627。因此，正文保留“2025 年 online-first”的时间说明，参考文献使用正式卷期信息；“§5、表7、附录G”等位置均指所核查全文的节、表和附录编号。</p>
+<p><a href="https://arxiv.org/abs/2406.13419">arXiv:2406.13419</a> 提供了更早的预印本。核对公式、附录和实验时，应注意版本差异，不能默认预印本与最终全文逐字相同。</p>
+<p><strong>代码：</strong><a href="https://github.com/ImDipsy/cpg_go1_simulation">ImDipsy/cpg_go1_simulation</a>，固定提交：</p>
+<p><code>cef012f12fed7316e307034d48f9c13df909de15</code></p>
+<p>以下实现结论针对这个提交。仓库将来的更新可能修复问题或改变实现，不应把这里的观察自动推广到所有版本。</p>
+<h2>2. 结论的三种来源</h2>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>本文中的例子</th>
+<th>可以支持什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原论文与公开代码事实</td>
+<td>方程、参数表、MLP 结构、训练脚本、仿真成功率</td>
+<td>描述论文方法与所查实现</td>
+</tr>
+<tr>
+<td>条件明确的数值重算</td>
+<td>八节点 Walk 的 RK4 状态、公开权重输出角度、角度对曲线</td>
+<td>检验“状态到目标角”的局部数值链</td>
+</tr>
+<tr>
+<td>教学模型与机制分析</td>
+<td>固定 r 的指数趋近、理想周期波形、双连杆逆解、标签配对示例、RL 架构比较</td>
+<td>帮助理解机制及必要条件</td>
+</tr>
+</tbody></table>
+</div>
+<p>第三类不能写成作者额外完成的实验。第二类也不能替代接触动力学仿真或真实机器人测试。</p>
+<h2>3. 原论文与代码入口</h2>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>主题</th>
+<th>主要入口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>步态模式与对称性</td>
+<td>原论文 §2、表1、附录B与E–G</td>
+</tr>
+<tr>
+<td>八节点结构、Stein 方程、参数来源</td>
+<td>§3、图3、式4–5、表2–3</td>
+</tr>
+<tr>
+<td>初始状态与五步态参数</td>
+<td>表6–7</td>
+</tr>
+<tr>
+<td>四种切换策略、刺激参数和等待窗口</td>
+<td>§4、附录C、图9–12</td>
+</tr>
+<tr>
+<td>执行 MLP 与参考角度来源</td>
+<td>§5.1、图6</td>
+</tr>
+<tr>
+<td>速度与身体切换成功率</td>
+<td>§5、表4–5</td>
+</tr>
+<tr>
+<td>传感反馈</td>
+<td>§6、图8</td>
+</tr>
+<tr>
+<td>状态与参数扰动</td>
+<td>附录D</td>
+</tr>
+<tr>
+<td>髋膝相位调节及后退结果</td>
+<td>附录G</td>
+</tr>
+</tbody></table>
+</div>
+<p>固定版本中的关键文件：</p>
+<ul>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/stein/implementations.py">Stein 网络和切换实现</a></li>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/execution_neural_network/mlp.py">执行网络结构与训练</a></li>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/gait_and_transition/process_network.py">特征构造与推理</a></li>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/examples/demo_video4_gait_transition.py">切换演示</a></li>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/resources/best_model/best_model_v1.2.pt">公开执行网络权重</a></li>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/tree/cef012f12fed7316e307034d48f9c13df909de15">完整仓库树</a></li>
+</ul>
+<h2>4. 本包做了哪些数值工作</h2>
+<h3>4.1 完整八节点 Walk</h3>
+<p>采用论文方程、表6初态、表7 Walk 参数以及常规耦合系数，联立积分 24 个状态。积分采用 RK4，步长为 0.0001 s，总时长 12 s。完整网络节律图显示启动约 10 s 后的片段。</p>
+<p>用于目标角的数据以 2 ms 控制采样间隔输出，388 行，时间为 10.594–11.368 s。送入执行 MLP 的导数特征来自最近一个积分小步的有限差分，并除以 50。这个有限差分不是声称与解析瞬时导数逐位一致。</p>
+<p>八节点数据用于正文图2、图4、图5及对应交互演示。它不是将每个节点分别独立运行后拼起来的信号。</p>
+<h3>4.2 作者权重的前向计算</h3>
+<p>检查点为作者公开的 <code>best_model_v1.2.pt</code>，结构为 11→24→12→1。本文重算取 Walk、左后腿、步幅指令 1。</p>
+<p>该权重文件记录的零基 epoch 为 87，最佳验证损失为约 0.00009851784457。其含义是监督角度拟合的验证指标，不是脚端误差或机器人跌倒概率。</p>
+<p>输出单位为 rad；图中的 degree 值是单位转换。正文图4和图5没有测量实际电机角，也没有声称展示原始训练标签。</p>
+<h3>4.3 插值交点与教学数据</h3>
+<p>正文图5中“相同髋角 60°”的两个交点，在相邻 2 ms 采样点间作线性插值确定；没有在插值时刻重新运行 CPG 和 MLP。因此，交点的小数位是对已有曲线的数值描述，不代表额外的物理测量精度。</p>
+<p>孤立单节点数据只用于解释快慢反馈，驱动恒定且无节点耦合。保留数据没有记录最初使用的积分器，所以未把该组数据标为 RK4 复现。</p>
+<p>理想时序图采用周期函数，教学双连杆采用两根单位长度杆。两者都不用于报告 Go1 的实际脚端误差或接触性能。完整说明见<a href="assets/figure-notes.html">图件与数据说明</a>。</p>
+<h2>5. 哪些重要步骤没有完整公开</h2>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>环节</th>
+<th>已公开的内容</th>
+<th>仍缺少的内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPG 参数设计</td>
+<td>参数表、对称性考虑、参数搜索来源及部分扫参结果</td>
+<td>完整搜索算法、搜索范围、目标函数与选择记录</td>
+</tr>
+<tr>
+<td>初始状态</td>
+<td>表6的具体数值</td>
+<td>为何选择这些数值的系统依据</td>
+</tr>
+<tr>
+<td>参考足端轨迹</td>
+<td>每步态五条不同步幅轨迹、范围 [0.8,1.2]、经 IK 生成关节角的路线</td>
+<td>完整轨迹生成代码与全部轨迹数据</td>
+</tr>
+<tr>
+<td>髋膝标签配对</td>
+<td>从已配好标签的数据行进行监督训练</td>
+<td>原始 IK 选支、周期参考选择、相位配准与重采样实现</td>
+</tr>
+<tr>
+<td>MLP 配置</td>
+<td>24、12 层宽，601 参数，训练脚本和检查点</td>
+<td>层宽搜索、架构消融、全部训练样本与学习曲线</td>
+</tr>
+<tr>
+<td>工程能力</td>
+<td>指定条件的仿真、切换与传感演示</td>
+<td>本控制器真机测试及统一条件 RL 基线</td>
+</tr>
+</tbody></table>
+</div>
+<p>这里“未完整公开”不表示作者一定没有执行这些步骤。它表示不能仅靠所查材料，确认每个细节或逐步重建原始流程。</p>
+<p>尤其对髋膝配对：正文给出的“共同周期进度—完整 IK 角度对—两路特征标签”是可行的解释方案。公开训练脚本从配好的 CSV 开始，并不能据此认定作者恰好使用了本文描述的参考事件或对齐方法。</p>
+<h2>6. 会影响复现的代码细节</h2>
+<h3>6.1 步幅 0.8 与步幅 1</h3>
+<p>普通 <code>ProcessNetwork</code> 推理路径中有步幅 0.8 的硬编码。论文第5节的性能表使用步幅指令 1；本文真实权重演示也显式使用 1。三者需要分别记录。直接运行当前示例脚本，不一定得到本精读图中的完全相同目标角。</p>
+<h3>6.2 控制频率与积分频率</h3>
+<p>普通切换示例预计算或读取 CPG CSV，再以 500 Hz 的仿真控制设置取样。实时反射路径保留状态，每 2 ms 内做 20 次 RK4 小步，并有其输出采样约定。其数据返回位置与区间末状态保存位置应在复现时核对。</p>
+<p>因此不要把“500 Hz”写成真机墙钟实时性测量，也不要把 2 ms 当成原始积分步长。</p>
+<h3>6.3 三个切换时刻要使用同一个时间基准</h3>
+<p>需同时记录：</p>
+<ol>
+<li>收到目标步态命令的时刻；</li>
+<li>等待结束后真正更换参数或施加刺激的时刻；</li>
+<li>执行网络的步态 one-hot 编码改变的时刻。</li>
+</ol>
+<p>所查 <code>demo_video4_gait_transition.py</code> 从完整 CPG 数据中删去前 2500 行，即按 500 Hz 删去约 5 s；后续循环索引重新从零开始，而步态编码判定使用从导出结果或文件名取得的 <code>execution_time × 500</code>。<strong>静态阅读显示这里有时间基准可能错开 5 s 的待核查点。</strong></p>
+<p>这不是已通过完整物理运行确认的错误结论，也不能据此认定论文实验表格无效。复现时应将 CSV 的绝对时间、截取后的索引和执行网络条件一起打印核对。本文固定 Walk 的权重演示没有发生步态编码切换，不涉及这个问题。</p>
+<h3>6.4 八个节点映射到哪个机器人轴</h3>
+<p>下表中的数组下标是公开实现所组装的 12 个可动关节控制数组下标，从 0 开始；不是任意加载方式下都不变的全 URDF joint index。</p>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>CPG 节点</th>
+<th>功能</th>
+<th align="right">控制数组下标</th>
+<th>URDF 名称</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>左后髋屈伸</td>
+<td align="right">1</td>
+<td><code>RL_thigh_joint</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>右后髋屈伸</td>
+<td align="right">4</td>
+<td><code>RR_thigh_joint</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>右前髋屈伸</td>
+<td align="right">7</td>
+<td><code>FR_thigh_joint</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>左前髋屈伸</td>
+<td align="right">10</td>
+<td><code>FL_thigh_joint</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>左后膝</td>
+<td align="right">2</td>
+<td><code>RL_calf_joint</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>右后膝</td>
+<td align="right">5</td>
+<td><code>RR_calf_joint</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>右前膝</td>
+<td align="right">8</td>
+<td><code>FR_calf_joint</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>左前膝</td>
+<td align="right">11</td>
+<td><code>FL_calf_joint</code></td>
+</tr>
+</tbody></table>
+</div>
+<p>另外四个 <code>*_hip_joint</code> 是外展轴，对应控制数组下标 0、3、6、9，目标设为零。不能把论文的“hip flexion-extension”直接映射到名称含 <code>hip_joint</code> 的轴。</p>
+<h3>6.5 并行输出与几何保证</h3>
+<p>批量构造八个输入、先设置全部关节目标再推进物理仿真，可以实现同一控制时刻下发。它不意味着监督数据自动相容，也不等于输出后运行了 IK 或几何投影。</p>
+<p>所查损失是逐角度 MSE，没有每步强制满足脚端位置、碰撞或接触约束的额外输出投影。正文对髋膝配对使用条件性解释，不能删去前提后改写成必然保证。</p>
+<h2>7. 相位、步态和统计表的整理约定</h2>
+<p>正文沿用原论文的提前量约定：</p>
+<div class="math-display" tabindex="0" aria-label="数学公式，可横向滚动"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false">(</mo><mi>t</mi><mo>+</mo><msub><mi>φ</mi><mi>i</mi></msub><mi>T</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">x_i(t)=x_1(t+\varphi_iT).</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">φ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span><span class="mord">.</span></span></span></span></span></div>
+<p>如果把参考节点峰值放在横轴零点，其他节点的同类峰值时间比例是：</p>
+<div class="math-display" tabindex="0" aria-label="数学公式，可横向滚动"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mo>−</mo><msub><mi>φ</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mtext> </mtext><mo lspace="0.22em" rspace="0.22em"><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow></mo><mtext> </mtext><mn>1.</mn></mrow><annotation encoding="application/x-tex">d_i=(-\varphi_i)\bmod 1.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">−</span><span class="mord"><span class="mord mathnormal">φ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.0556em;"></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin"><span class="mord"><span class="mord mathrm">mod</span></span></span><span class="mspace" style="margin-right:0.0556em;"></span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1.</span></span></span></span></span></div>
+<p>Walk 的提前量按左后、右后、右前、左前排列为 [0, 1/2, 1/4, 3/4]，其峰值延迟为 [0, 1/2, 3/4, 1/4]。图与动画按这个换算统一。相位提前量、峰值延迟和实际触地时刻不能互换。</p>
+<p>原文有一处将 Pace 的置换写成与 Bound 相同的组合。本文按原文表1与固定节点对应整理：Pace 的同步分组为 (1,4)/(2,3)，Bound 为 (1,2)/(3,4)。这是消除局部记述矛盾，未改变节点映射。</p>
+<p>原文切换成功率表的行列方向与本精读不同。正文统一为“行=源步态，列=目标步态”，已转置数值。例如 79.6% 属于 Pace→Pronk，84.6% 属于 Pronk→Bound。</p>
+<p>每种转换的 500 次测试是改变 10–11 s 内的命令时刻，不能改述成 500 个任意初态或场景。速度表中的标准差也不能改成置信区间。</p>
+<h2>8. 与强化学习比较的来源边界</h2>
+<p>正文第12–13节使用以下第一手工作定位已有方法：</p>
+<ul>
+<li><a href="https://proceedings.mlr.press/v164/rudin22a.html">Rudin 等：Learning to Walk in Minutes</a>，说明大规模并行四足 RL 与硬件迁移。</li>
+<li><a href="https://arxiv.org/abs/2011.01387">Siekmann 等：Periodic Reward Composition</a>，说明周期奖励组合；实验对象是 Cassie 双足。</li>
+<li><a href="https://proceedings.mlr.press/v205/margolis23a.html">Margolis 与 Agrawal：Walk These Ways</a>，说明四足策略中的行为条件、足间时间偏移与相关奖励。</li>
+<li><a href="https://doi.org/10.1109/LRA.2022.3218167">Bellegarda 与 Ijspeert：CPG-RL</a>，说明策略调节振荡器、经过足端映射及 IK 的混合架构。</li>
+</ul>
+<p>“节律先验进入训练目标还是在线动力系统”“同样局部特征能否区分运动阶段”“公平比较需要控制哪些变量”等属于本文的机制分析。它们不是 Liu 等已经完成的 RL 对照实验，也没有被用来跨机器人排列性能名次。</p>
+<h2>9. 本包可以复用到什么程度</h2>
+<p>本包提供完整精读、静态与交互图件、作图数据以及重绘脚本。它支持对本文解释和图件的追溯，不包含原始论文 PDF、作者完整仓库、模型权重或全部原始训练数据。</p>
+<p>后续若开展整套控制器复现，仍需要从原始来源获取代码和权重，明确参考数据准备过程，核对机器人模型与控制器参数，并独立检验身体运动。本文没有声称这项工作已经完成。</p>
+<footer class="article-footer"><a href="#top">回到本页开头</a> · <a href="index.html">返回正文</a></footer></article></main>
+</body>
+</html>

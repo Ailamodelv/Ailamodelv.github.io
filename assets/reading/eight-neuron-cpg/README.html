@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>文献精读使用说明</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<style>
+:root{color-scheme:light;--ink:#243242;--muted:#647387;--line:#dbe3ea;--accent:#166278;--paper:#fff;--wash:#f3f5f7}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--wash);color:var(--ink);font:17px/1.9 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;text-rendering:optimizeLegibility;overflow-wrap:break-word}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid #4098af;outline-offset:3px}
+.reading-nav{position:sticky;top:0;z-index:10;background:#fffffff5;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.nav-inner{max-width:980px;margin:auto;min-height:56px;padding:10px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;line-height:1.5}
+.nav-brand{font-weight:700;letter-spacing:.04em;color:#39576c;white-space:nowrap}
+.nav-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 18px}
+.nav-links a{text-decoration:none}
+.paper-shell{max-width:980px;margin:30px auto 60px;padding:46px 40px 60px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 30px #273a5010}
+article{max-width:900px;margin:auto;min-width:0}
+article>:first-child{margin-top:0}
+h1,h2,h3,h4{color:#182c3c;font-weight:700;line-height:1.5;overflow-wrap:anywhere;scroll-margin-top:80px}
+h1{font-size:32px;letter-spacing:-.025em;margin:0 0 26px;line-height:1.55}
+h2{font-size:25px;margin:54px 0 18px;padding-bottom:10px;border-bottom:2px solid #e2e9ee}
+h3{font-size:20px;margin:30px 0 14px}
+h4{font-size:18px;margin:25px 0 12px}
+p{margin:15px 0}
+strong{font-weight:700;color:#182d3e}
+ul,ol{margin:16px 0;padding-left:1.6em}
+li{margin:6px 0}
+li>ul,li>ol{margin:8px 0}
+li p{margin:8px 0}
+blockquote{margin:22px 0;padding:12px 20px;border-left:4px solid #82aeba;background:#f0f6f8;color:#354d60;border-radius:0 6px 6px 0}
+blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}
+hr{border:0;border-top:1px solid var(--line);margin:38px 0}
+img{display:block;max-width:100%;height:auto;margin:24px auto;border-radius:5px}
+figure{max-width:100%;margin:24px 0}
+figcaption{font-size:14px;color:var(--muted);line-height:1.7;text-align:center;margin-top:10px}
+.table-scroll{width:100%;max-width:100%;overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:7px;scrollbar-width:thin}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.8;margin:0}
+thead{background:#edf3f6;color:#234154}
+th,td{vertical-align:top;text-align:left;padding:11px 14px;border-right:1px solid #e0e6eb;border-bottom:1px solid #e0e6eb;min-width:105px;max-width:440px}
+th:last-child,td:last-child{border-right:0}
+tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafcfd}
+table .math-inline{max-width:none;overflow:visible}
+pre{max-width:100%;overflow:auto;padding:20px 22px;border:1px solid #dbe3eb;border-radius:7px;background:#f3f6f9;font:13px/1.75 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;tab-size:4}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.86em;background:#edf2f6;padding:.15em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+.math-inline{display:inline-flex;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;line-height:normal;padding-block:2px}
+.math-display{max-width:100%;overflow-x:auto;overflow-y:hidden;margin:22px 0;padding:3px 8px;scrollbar-width:thin}
+.math-display .katex-display{margin:.25em 0;text-align:left}
+.math-display .katex-display>.katex{display:block;width:max-content;min-width:100%;text-align:center}
+.table-scroll,.math-display,.math-inline{position:relative}
+.katex{font-size:1.03em}
+article a[id]{scroll-margin-top:80px}
+.article-footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--muted);font-size:13px}
+@media(max-width:700px){body{font-size:16px;line-height:1.85}.paper-shell{margin:0;padding:28px 20px 44px;border:0;border-radius:0;box-shadow:none}.nav-inner{padding:10px 20px}.nav-brand{font-size:12px}h1{font-size:26px}h2{font-size:22px;margin-top:40px}h3{font-size:19px}blockquote{padding:10px 14px}th,td{padding:9px 11px;min-width:108px}.math-display{padding-inline:0}pre{padding:15px;font-size:12px}}
+@media(max-width:380px){body{font-size:15px}.paper-shell{padding:22px 15px 36px}.nav-inner{padding:10px 15px;gap:8px}.nav-links{gap:6px 11px}h1{font-size:24px}h2{font-size:21px}ul,ol{padding-left:1.35em}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:#fff;font-size:11pt;line-height:1.65}.reading-nav{display:none}.paper-shell{max-width:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none}h1{font-size:23pt}h2{font-size:17pt;break-after:avoid}h3{font-size:14pt;break-after:avoid}img,figure,blockquote{break-inside:avoid}.table-scroll{overflow:visible;font-size:9pt}.math-display{overflow:visible}a{color:inherit}.article-footer{display:none}}
+</style>
+</head>
+<body id="top">
+<nav class="reading-nav" aria-label="阅读导航"><div class="nav-inner"><span class="nav-brand">文献精读</span><div class="nav-links"><a href="index.html">返回正文</a><a href="README.md" download>Markdown 源文</a></div></div></nav>
+<main class="paper-shell"><article><h1>文献精读使用说明</h1>
+<p>本包是一篇面向初学者的完整精读，围绕 <em>An eight-neuron network for quadruped locomotion with hip-knee joint control</em>，按“控制量 → 单节点振荡 → 多节点相位 → 角度解码 → 髋膝配对 → 步态切换 → 实验与 RL 比较”的顺序展开。</p>
+<h2>1. 从哪里开始</h2>
+<ul>
+<li><strong>在本地阅读：</strong> 解压完整压缩包，双击 <code>index.html</code>。正文公式已经排版，无需安装插件或启动服务器。</li>
+<li><strong>编辑或发博客：</strong> 使用 <code>article.md</code>，同时保留它所引用的图片、交互页和附录。</li>
+<li><strong>检查来源和复现范围：</strong> 阅读 <code>source-notes.md</code> 与 <code>assets/figure-notes.md</code>。</li>
+<li><strong>查全部切换参数：</strong> 阅读 <code>appendix/transition-parameters.md</code>。</li>
+</ul>
+<p>使用说明、来源说明、图件说明与切换附录也附有同名 HTML。离线阅读版中的链接会打开已排版页面，各页导航可下载对应 Markdown 源文。</p>
+<p>不要在压缩包预览窗口里直接打开 HTML；先解压，才能保持相对路径可用。正文、图片、公式字体和六个交互页均可离线使用；点击论文、代码或其他外部参考链接时才需要网络。</p>
+<h2>2. 文件对应关系</h2>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>文件或目录</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>article.md</code></td>
+<td>博客正文，含目录、公式、图注、参考文献和普通相对链接</td>
+</tr>
+<tr>
+<td><code>index.html</code></td>
+<td>已排版的离线阅读版</td>
+</tr>
+<tr>
+<td><code>assets/*.png</code></td>
+<td>正文默认使用的六张静态图</td>
+</tr>
+<tr>
+<td><code>assets/*.svg</code></td>
+<td>对应的矢量图，文字已转成路径</td>
+</tr>
+<tr>
+<td><code>assets/data/*.json</code></td>
+<td>配图使用的教学数据和数值重算数据</td>
+</tr>
+<tr>
+<td><code>assets/build-figures.py</code></td>
+<td>根据随包数据重绘六张静态图</td>
+</tr>
+<tr>
+<td><code>assets/figure-notes.md</code></td>
+<td>逐图来源、参数、单位和数值解释</td>
+</tr>
+<tr>
+<td><code>interactive/*.html</code></td>
+<td>六个可独立打开的交互演示</td>
+</tr>
+<tr>
+<td><code>appendix/transition-parameters.md</code></td>
+<td>全部等待窗口与 Power Pair 参数</td>
+</tr>
+<tr>
+<td><code>source-notes.md</code></td>
+<td>固定代码版本、实现核查及未公开步骤</td>
+</tr>
+<tr>
+<td><code>references.bib</code></td>
+<td>原论文、代码及 RL 对比文献的 BibTeX 条目</td>
+</tr>
+<tr>
+<td><code>vendor/</code></td>
+<td>离线字体、前端库及其第三方许可证</td>
+</tr>
+</tbody></table>
+</div>
+<h2>3. 上传到博客</h2>
+<h3>保持普通 Markdown 的做法</h3>
+<p>将 <code>article.md</code> 作为文章正文，把 <code>assets/</code>、<code>interactive/</code> 和 <code>appendix/</code> 放在能被正文相对链接访问的位置，同时放入 <code>source-notes.md</code>、<code>README.md</code>。如果博客会把文章和静态资源放到不同目录，请按实际访问地址批量修改相对链接。</p>
+<p>正文使用标准 Markdown 图片、表格和普通链接，没有专属引用卡片。数学使用 <code>$...$</code> 和 <code>$$...$$</code>，需要博客的 Markdown 渲染器启用 KaTeX 或 MathJax 等数学支持。正文中的显式 HTML 锚点用于目录和参考文献定位；若平台过滤 HTML 锚点，可以按平台生成的标题锚点重建目录。</p>
+<p>如果平台只支持文章和图片，可先发布正文与六张 PNG；把交互链接改成自己的静态托管地址，或保留为附件下载。不要只复制 Markdown 文本后省略图片上传，否则图会缺失。</p>
+<h3>使用交互演示</h3>
+<p>每个交互 HTML 都包含自己的脚本和数据，可以单独上传到可托管静态文件的位置。它们不需要账户、接口、CDN 或本地服务。</p>
+<p>博客允许 iframe 时，可以使用这样的普通 HTML，路径按博客实际地址调整：</p>
+<pre><code class="language-html">&lt;iframe
+  src=&quot;./interactive/chasing-oscillation.html&quot;
+  title=&quot;完整八节点网络中的 x 与 r&quot;
+  loading=&quot;lazy&quot;
+  style=&quot;width:100%;height:980px;border:1px solid #dbe3ed;border-radius:12px;&quot;
+&gt;&lt;/iframe&gt;
+</code></pre>
+<p>不同页面的高度不同，必要时调整 <code>height</code>。直接链接打开交互页的兼容性通常更好；若博客过滤 iframe，正文静态图仍能解释关键关系。</p>
+<h3>直接托管离线阅读版</h3>
+<p>如果博客支持上传完整静态目录，也可以将本包作为一个目录上传，以 <code>index.html</code> 为入口。请保持文件相对位置，特别是 <code>vendor/katex/</code> 与其字体子目录。</p>
+<p>本包不附带博客账号或自动发布脚本。</p>
+<h2>4. 六个交互演示怎么用</h2>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>页面</th>
+<th>推荐观察的内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>single-neuron-rhythm.html</code></td>
+<td>孤立节点中，X、慢响应 Y、快响应 Z 与移动目标 r 的关系</td>
+</tr>
+<tr>
+<td><code>chasing-oscillation.html</code></td>
+<td>完整八节点 Walk 信号中，r−x 如何决定 x 的瞬时增减；固定 r 的教学对照</td>
+</tr>
+<tr>
+<td><code>gait-phase-rhythms.html</code></td>
+<td>切换五种理想时序，区分相位提前量与峰值出现的时间</td>
+</tr>
+<tr>
+<td><code>joint-target-step.html</code></td>
+<td>拖动时间，查看当前 CPG 特征和当前关节目标角</td>
+</tr>
+<tr>
+<td><code>hip-knee-pairing.html</code></td>
+<td>在髋角—膝角平面追踪同时刻角度对，观察同一髋角对应不同膝角</td>
+</tr>
+<tr>
+<td><code>ik-branch-pairing.html</code></td>
+<td>比较完整逆解与交叉组合如何产生不同脚端位置</td>
+</tr>
+</tbody></table>
+</div>
+<p>教学双连杆不是 Go1 的真实尺寸或角度定义；理想时序图不是实测足地接触图；真实权重演示展示的是目标角，均已在正文和图中注明。</p>
+<h2>5. 引用、修改与图件</h2>
+<p>正文将三类内容分开标识：论文或公开代码的事实、固定条件下的数值重算，以及帮助理解的教学例子。编辑或节选时，请保留这些说明，尤其不要把教学配对流程写成作者已公开的原始训练算法。</p>
+<p>图件为本精读配套制作，未复制论文原图。作者的原论文 PDF、仓库源代码及模型权重不在本包中，入口位于正文参考文献；如需继续复现，请从所引用的原始来源获取。</p>
+<p>随包保留了 KaTeX 与 D3 的许可证。只发布 PNG 和 Markdown 时不必依赖这些前端库；发布现成 HTML 或交互页时应保留相关许可证。</p>
+<p>重绘图件需要 Python 3、NumPy、Matplotlib 和可用的中文字体，具体方法见 <code>assets/figure-notes.md</code>。仅阅读本包不需要 Python。</p>
+<p>整理日期：2026 年 10 月 18 日。</p>
+<footer class="article-footer"><a href="#top">回到本页开头</a> · <a href="index.html">返回正文</a></footer></article></main>
+</body>
+</html>

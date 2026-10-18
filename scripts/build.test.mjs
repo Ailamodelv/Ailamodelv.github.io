@@ -81,6 +81,48 @@ test('standalone screenshots show escaped captions and safe original-image links
   assert.ok(!html.includes('href="javascript:'));
 });
 
+test('math renders inline, display and table expressions while code stays literal', () => {
+  const source = String.raw`目标 $q_i^*$，代码 \`$q_i$\`。
+
+$$
+\dot x = \frac{1}{1 + e^{-u}}
+$$
+
+| 表达式 | 说明 |
+| --- | --- |
+| $|x|$ | 绝对值 |
+
+\`\`\`bash
+echo $HOME
+\`\`\``.replaceAll('\\`', '`');
+  const { html } = renderMarkdown(source);
+  assert.equal((html.match(/class="katex"/g) || []).length, 3);
+  assert.ok(html.includes('class="math-display"'));
+  assert.ok(html.includes('<math xmlns='));
+  assert.ok(html.includes('<code>$q_i$</code>'));
+  assert.ok(html.includes('echo $HOME'));
+  assert.ok(html.includes('<table>'));
+  assert.ok(!html.includes('math-error'));
+  const unsafe = renderMarkdown(String.raw`$\href{javascript:alert(1)}{bad}$`).html;
+  assert.ok(!unsafe.includes('href="javascript:'));
+  assert.ok(!renderMarkdown('$\\unknowncommand$').html.includes('<script'));
+});
+
+test('explicit reading anchors are limited to inert unique IDs', () => {
+  const { html, toc } = renderMarkdown('<a id="s1"></a>\n## s1\n\n[章节](#s1)\n\n<a id="s1"></a>\n\n<a id="unsafe" onclick="alert(1)"></a>');
+  assert.ok(html.includes('<span class="article-anchor" id="s1"></span>'));
+  assert.equal((html.match(/ id="s1"/g) || []).length, 1);
+  assert.equal(toc[0].id, 's1-2');
+  assert.ok(!html.includes(' onclick="'));
+  assert.ok(html.includes('href="#s1"'));
+});
+
+test('bibliographic emphasis and Markdown hard breaks preserve readable lines', () => {
+  const { html } = renderMarkdown('**题目：** *论文标题*  \n**作者：** 姓名\n\n---');
+  assert.ok(html.includes('<strong>题目：</strong> <em>论文标题</em><br><strong>作者：</strong>'));
+  assert.ok(html.includes('<hr>'));
+});
+
 test('configuration uses Pages origin and normalizes root and project paths', () => {
   assert.equal(normalizeBasePath('/'), '');
   assert.equal(normalizeBasePath('notes/'), '/notes');

@@ -172,3 +172,15 @@ p { margin-bottom: 20px; }
   .article-figure { break-inside: avoid; }
   .prose a[href*="/assets/downloads/"] { color: #214e30; background: #fff; }
 }
+
+/* Local, pre-rendered formulas: no runtime or external font service. */
+.math-inline { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; line-height: normal; padding-block: 2px; }
+.math-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; margin: 25px 0; padding: 9px 4px; }
+.math-display .katex-display { margin: .4em 0; }
+.math-display .katex-display > .katex { display: block; width: max-content; min-width: 100%; }
+.prose .katex { font-size: 1.05em; }
+.article-anchor { display: block; scroll-margin-top: 24px; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0; }
+.prose .math-error { color: #f2afa0; }
+.prose a[href*="/interactive/"] { display: inline-block; padding-bottom: 3px; font-size: 13px; }
+.prose a[href*="/interactive/"]::after { content: ' ↗'; }

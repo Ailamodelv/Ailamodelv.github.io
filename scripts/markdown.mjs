@@ -1,4 +1,13 @@
-// A deliberately small Markdown renderer. Raw HTML is always rendered as text.
+import katex from './vendor/katex.cjs';
+
+// Raw HTML is escaped, except for strictly validated empty navigation anchors.
+function renderMath(source, displayMode = false) {
+  try {
+    return katex.renderToString(source, { displayMode, trust: false, strict: 'ignore', maxSize: 20, maxExpand: 1000 });
+  } catch {
+    return `<code class="math-error">${escapeHtml(source)}</code>`;
+  }
+}
 export function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 }
@@ -52,13 +61,16 @@ export function safeImage(raw, basePath = '') {
 
 export function renderInline(text, basePath = '', depth = 0) {
   if (depth > 3) return escapeHtml(text);
-  const token = /`(?<code>[^`\n]+)`|\*\*(?<bold>[^*\n]+)\*\*|!\[(?<imageAlt>[^\]\n]*)\]\((?<imageSrc>[^)\s]+)(?:\s+"(?<imageTitle>[^"]*)")?\)|\[(?<label>[^\]\n]+)\]\((?<href>[^)\s]+)(?:\s+"(?<title>[^"]*)")?\)/g;
+  const token = /`(?<code>[^`\n]+)`|(?<!\\)\$(?!\$)(?<math>[^\n$]+?)(?<!\\)\$(?!\$)|\*\*(?<bold>[^*\n]+)\*\*|\*(?<em>[^*\n]+)\*|!\[(?<imageAlt>[^\]\n]*)\]\((?<imageSrc>[^)\s]+)(?:\s+"(?<imageTitle>[^"]*)")?\)|\[(?<label>[^\]\n]+)\]\((?<href>[^)\s]+)(?:\s+"(?<title>[^"]*)")?\)|(?<lineBreak>\n)/g;
   let result = '', cursor = 0, match;
   while ((match = token.exec(text))) {
     result += escapeHtml(text.slice(cursor, match.index));
     const groups = match.groups;
     if (groups.code !== undefined) result += `<code>${escapeHtml(groups.code)}</code>`;
+    else if (groups.math !== undefined) result += `<span class="math-inline">${renderMath(groups.math)}</span>`;
     else if (groups.bold !== undefined) result += `<strong>${renderInline(groups.bold, basePath, depth + 1)}</strong>`;
+    else if (groups.em !== undefined) result += `<em>${renderInline(groups.em, basePath, depth + 1)}</em>`;
+    else if (groups.lineBreak !== undefined) result += '<br>';
     else if (groups.imageAlt !== undefined) {
       const src = safeImage(groups.imageSrc, basePath);
       const title = groups.imageTitle ? ` title="${escapeHtml(groups.imageTitle)}"` : '';
@@ -102,11 +114,12 @@ function splitTableRow(line) {
   let text = line.trim();
   if (text.startsWith('|')) text = text.slice(1);
   if (text.endsWith('|') && !text.endsWith('\\|')) text = text.slice(0, -1);
-  const cells = []; let current = '', code = false;
+  const cells = []; let current = '', code = false, math = false;
   for (let i = 0; i < text.length; i++) {
     if (text[i] === '\\' && text[i + 1] === '|') { current += '|'; i++; continue; }
     if (text[i] === '`') code = !code;
-    if (text[i] === '|' && !code) { cells.push(current.trim()); current = ''; }
+    if (text[i] === '$' && text[i - 1] !== '\\' && !code) math = !math;
+    if (text[i] === '|' && !code && !math) { cells.push(current.trim()); current = ''; }
     else current += text[i];
   }
   cells.push(current.trim());
@@ -116,7 +129,7 @@ function splitTableRow(line) {
 export function renderMarkdown(source, { basePath = '' } = {}) {
   const lines = String(source).replace(/\r\n?/g, '\n').split('\n');
   const html = [], toc = [], ids = new Set();
-  const blockStart = (line) => /^(?:\s*$|#{1,6}\s|```|\s*>\s?|\s*[-*+]\s+|\s*\d+[.)]\s+)/.test(line);
+  const blockStart = (line) => /^(?:\s*$|#{1,6}\s|```|\$\$|<a id="|---\s*$|\s*>\s?|\s*[-*+]\s+|\s*\d+[.)]\s+)/.test(line);
   const tableAt = (index) => {
     if (!lines[index]?.includes('|') || !lines[index + 1]?.includes('|')) return null;
     const headers = splitTableRow(lines[index]), delimiters = splitTableRow(lines[index + 1]);
@@ -126,6 +139,17 @@ export function renderMarkdown(source, { basePath = '' } = {}) {
   while (i < lines.length) {
     const line = lines[i];
     if (!line.trim()) { i++; continue; }
+    const anchor = line.match(/^<a id="([a-zA-Z][a-zA-Z0-9_-]*)"><\/a>\s*$/);
+    if (anchor && !ids.has(anchor[1])) {
+      ids.add(anchor[1]); html.push(`<span class="article-anchor" id="${anchor[1]}"></span>`); i++; continue;
+    }
+    if (/^---\s*$/.test(line)) { html.push('<hr>'); i++; continue; }
+    if (line.trim() === '$$') {
+      const math = []; i++;
+      while (i < lines.length && lines[i].trim() !== '$$') math.push(lines[i++]);
+      if (i < lines.length) i++;
+      html.push(`<div class="math-display">${renderMath(math.join('\n'), true)}</div>`); continue;
+    }
     const figure = line.match(/^!\[([^\]\n]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)\s*$/);
     if (figure) {
       const src = safeImage(figure[2], basePath);
@@ -181,9 +205,9 @@ export function renderMarkdown(source, { basePath = '' } = {}) {
       const tag = ordered ? 'ol' : 'ul';
       html.push(`<${tag}${ordered && list[2] !== '1' ? ` start="${Number(list[2])}"` : ''}>${items.join('')}</${tag}>`); continue;
     }
-    const paragraph = [line.trim()]; i++;
-    while (i < lines.length && !blockStart(lines[i]) && !tableAt(i)) paragraph.push(lines[i++].trim());
-    html.push(`<p>${renderInline(paragraph.join(' '), basePath)}</p>`);
+    const paragraph = [line]; i++;
+    while (i < lines.length && !blockStart(lines[i]) && !tableAt(i)) paragraph.push(lines[i++]);
+    html.push(`<p>${renderInline(paragraph.map((part, index) => part.trim() + (index < paragraph.length - 1 ? / {2,}$/.test(part) ? '\n' : ' ' : '')).join(''), basePath)}</p>`);
   }
   const plainText = headingText(String(source)).replace(/```[^\n]*\n([\s\S]*?)```/g, '$1').replace(/^[#>\s*-]+/gm, '').replace(/\s+/g, ' ').trim();
   return { html: html.join('\n'), toc, plainText };

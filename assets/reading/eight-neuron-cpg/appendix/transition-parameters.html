@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>附录：二十种步态转换的策略、刺激参数与等待窗口</title>
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<style>
+:root{color-scheme:light;--ink:#243242;--muted:#647387;--line:#dbe3ea;--accent:#166278;--paper:#fff;--wash:#f3f5f7}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--wash);color:var(--ink);font:17px/1.9 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;text-rendering:optimizeLegibility;overflow-wrap:break-word}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid #4098af;outline-offset:3px}
+.reading-nav{position:sticky;top:0;z-index:10;background:#fffffff5;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.nav-inner{max-width:980px;margin:auto;min-height:56px;padding:10px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;line-height:1.5}
+.nav-brand{font-weight:700;letter-spacing:.04em;color:#39576c;white-space:nowrap}
+.nav-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 18px}
+.nav-links a{text-decoration:none}
+.paper-shell{max-width:980px;margin:30px auto 60px;padding:46px 40px 60px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 30px #273a5010}
+article{max-width:900px;margin:auto;min-width:0}
+article>:first-child{margin-top:0}
+h1,h2,h3,h4{color:#182c3c;font-weight:700;line-height:1.5;overflow-wrap:anywhere;scroll-margin-top:80px}
+h1{font-size:32px;letter-spacing:-.025em;margin:0 0 26px;line-height:1.55}
+h2{font-size:25px;margin:54px 0 18px;padding-bottom:10px;border-bottom:2px solid #e2e9ee}
+h3{font-size:20px;margin:30px 0 14px}
+h4{font-size:18px;margin:25px 0 12px}
+p{margin:15px 0}
+strong{font-weight:700;color:#182d3e}
+ul,ol{margin:16px 0;padding-left:1.6em}
+li{margin:6px 0}
+li>ul,li>ol{margin:8px 0}
+li p{margin:8px 0}
+blockquote{margin:22px 0;padding:12px 20px;border-left:4px solid #82aeba;background:#f0f6f8;color:#354d60;border-radius:0 6px 6px 0}
+blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}
+hr{border:0;border-top:1px solid var(--line);margin:38px 0}
+img{display:block;max-width:100%;height:auto;margin:24px auto;border-radius:5px}
+figure{max-width:100%;margin:24px 0}
+figcaption{font-size:14px;color:var(--muted);line-height:1.7;text-align:center;margin-top:10px}
+.table-scroll{width:100%;max-width:100%;overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:7px;scrollbar-width:thin}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.8;margin:0}
+thead{background:#edf3f6;color:#234154}
+th,td{vertical-align:top;text-align:left;padding:11px 14px;border-right:1px solid #e0e6eb;border-bottom:1px solid #e0e6eb;min-width:105px;max-width:440px}
+th:last-child,td:last-child{border-right:0}
+tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafcfd}
+table .math-inline{max-width:none;overflow:visible}
+pre{max-width:100%;overflow:auto;padding:20px 22px;border:1px solid #dbe3eb;border-radius:7px;background:#f3f6f9;font:13px/1.75 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;tab-size:4}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.86em;background:#edf2f6;padding:.15em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+.math-inline{display:inline-flex;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;line-height:normal;padding-block:2px}
+.math-display{max-width:100%;overflow-x:auto;overflow-y:hidden;margin:22px 0;padding:3px 8px;scrollbar-width:thin}
+.math-display .katex-display{margin:.25em 0;text-align:left}
+.math-display .katex-display>.katex{display:block;width:max-content;min-width:100%;text-align:center}
+.table-scroll,.math-display,.math-inline{position:relative}
+.katex{font-size:1.03em}
+article a[id]{scroll-margin-top:80px}
+.article-footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--muted);font-size:13px}
+@media(max-width:700px){body{font-size:16px;line-height:1.85}.paper-shell{margin:0;padding:28px 20px 44px;border:0;border-radius:0;box-shadow:none}.nav-inner{padding:10px 20px}.nav-brand{font-size:12px}h1{font-size:26px}h2{font-size:22px;margin-top:40px}h3{font-size:19px}blockquote{padding:10px 14px}th,td{padding:9px 11px;min-width:108px}.math-display{padding-inline:0}pre{padding:15px;font-size:12px}}
+@media(max-width:380px){body{font-size:15px}.paper-shell{padding:22px 15px 36px}.nav-inner{padding:10px 15px;gap:8px}.nav-links{gap:6px 11px}h1{font-size:24px}h2{font-size:21px}ul,ol{padding-left:1.35em}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{body{background:#fff;font-size:11pt;line-height:1.65}.reading-nav{display:none}.paper-shell{max-width:none;margin:0;padding:0;border:0;border-radius:0;box-shadow:none}h1{font-size:23pt}h2{font-size:17pt;break-after:avoid}h3{font-size:14pt;break-after:avoid}img,figure,blockquote{break-inside:avoid}.table-scroll{overflow:visible;font-size:9pt}.math-display{overflow:visible}a{color:inherit}.article-footer{display:none}}
+</style>
+</head>
+<body id="top">
+<nav class="reading-nav" aria-label="阅读导航"><div class="nav-inner"><span class="nav-brand">文献精读</span><div class="nav-links"><a href="../index.html">返回正文</a><a href="transition-parameters.md" download>Markdown 源文</a></div></div></nav>
+<main class="paper-shell"><article><h1>附录：二十种步态转换的策略、刺激参数与等待窗口</h1>
+<p><a href="../index.html#s10">返回精读正文</a></p>
+<p>本附录整理 Liu 等论文第 4 节及附录 C 的具体设置，并与作者公开代码的固定提交 <code>cef012f12fed7316e307034d48f9c13df909de15</code> 核对。页码指 26 页 online-first 全文：策略解释在第 8–10 页，刺激参数与等待窗口在第 19–21 页。这里列出的是本文所用网络与参数下的配置，不是适用于任意机器人和任意 CPG 的通用参数表。<a href="https://doi.org/10.1177/02783649251364286">论文 DOI</a>；<a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/stein/implementations.py">固定版本的切换实现</a>。</p>
+<h2>1. 先分清四种策略</h2>
+<p>四种策略都涉及采用目标步态的动力学参数；区别在于是否选择执行时机，以及是否对选定节点增加短时刺激。</p>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>等待合适阶段</th>
+<th>短时刺激</th>
+<th>操作含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Switch</td>
+<td>否</td>
+<td>否</td>
+<td>直接改变步态控制参数</td>
+</tr>
+<tr>
+<td>Power Pair</td>
+<td>否</td>
+<td>是</td>
+<td>在改变步态参数的过程中，短时增强两个选定髋节点的驱动</td>
+</tr>
+<tr>
+<td>Wait &amp; Switch</td>
+<td>是</td>
+<td>否</td>
+<td>等待成功窗口，再改变步态参数</td>
+</tr>
+<tr>
+<td>Wait &amp; Power Pair</td>
+<td>是</td>
+<td>是</td>
+<td>等待成功窗口，再执行含短时刺激的切换</td>
+</tr>
+</tbody></table>
+</div>
+<p>“等待”不是将神经状态暂停：系统继续按当前规则运动，直到进入所选窗口。“刺激”是改变神经模型的驱动参数，不是直接增加某两个关节的电机力矩。原文是在所观察到的失败机制基础上选用这些组合，没有证明四种组合穷尽所有可能的切换方法。<a href="https://doi.org/10.1177/02783649251364286">论文 §4.2、附录C</a>。</p>
+<h2>2. 完整的源步态—目标步态矩阵</h2>
+<p><strong>行表示切换前，列表示切换后。</strong> 五步态之间共有 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>×</mo><mn>4</mn><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">5\times4=20</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">5</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">20</span></span></span></span></span> 个有向转换，不包括保持原步态。</p>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>源 → 目标</th>
+<th>Walk</th>
+<th>Trot</th>
+<th>Pace</th>
+<th>Bound</th>
+<th>Pronk</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Walk</td>
+<td>—</td>
+<td>Wait &amp; Switch</td>
+<td>Wait &amp; Switch</td>
+<td>Switch</td>
+<td>Switch</td>
+</tr>
+<tr>
+<td>Trot</td>
+<td>Switch</td>
+<td>—</td>
+<td>Wait &amp; Switch</td>
+<td>Switch</td>
+<td>Switch</td>
+</tr>
+<tr>
+<td>Pace</td>
+<td>Switch</td>
+<td>Wait &amp; Switch</td>
+<td>—</td>
+<td>Switch</td>
+<td>Switch</td>
+</tr>
+<tr>
+<td>Bound</td>
+<td>Wait &amp; Power Pair</td>
+<td>Wait &amp; Power Pair</td>
+<td>Wait &amp; Power Pair</td>
+<td>—</td>
+<td>Switch</td>
+</tr>
+<tr>
+<td>Pronk</td>
+<td>Power Pair</td>
+<td>Wait &amp; Power Pair</td>
+<td>Wait &amp; Power Pair</td>
+<td>Power Pair</td>
+<td>—</td>
+</tr>
+</tbody></table>
+</div>
+<p>各策略对应的转换数为：Switch 9 种，Power Pair 2 种，Wait &amp; Switch 4 种，Wait &amp; Power Pair 5 种。该分配可在公开实现的 <code>set_strategy()</code> 中逐项核对。<a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/stein/implementations.py">代码</a>。</p>
+<h3>为什么反向切换不能直接照搬？</h3>
+<p>例如，Walk→Pronk 使用 Switch，而 Pronk→Walk 使用 Power Pair；Walk→Trot 需要等待，Trot→Walk 则直接切换。</p>
+<p>从动力系统看，A→B 是从 A 当前轨道上的状态出发，采用通向 B 的演化规则。B→A 的出发状态、原有同步分组和目标规则都发生了变化，它并不是将 A→B 的过程按时间倒放。因此，某个方向无需额外刺激，并不意味着反方向也无需刺激。这是对表中不对称分配的机制解释；具体采用哪种策略仍以论文对该网络的数值试验为依据。</p>
+<p>还要区分“神经信号可以切换”与“机器人身体切换成功”。这张策略表不代表二十种身体转换都达到 100% 成功率；身体仿真的完整成功率见<a href="../index.html#s11">正文第 11.3 节</a>。</p>
+<h2>3. Power Pair 的符号和七组参数</h2>
+<h3>3.1 节点编号</h3>
+<p>本附录中的刺激节点均为上层髋屈伸节点，编号从 1 开始：</p>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>节点</th>
+<th>对应关节</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>左后髋屈伸</td>
+</tr>
+<tr>
+<td>2</td>
+<td>右后髋屈伸</td>
+</tr>
+<tr>
+<td>3</td>
+<td>右前髋屈伸</td>
+</tr>
+<tr>
+<td>4</td>
+<td>左前髋屈伸</td>
+</tr>
+</tbody></table>
+</div>
+<p>因此，1、3 是一组对角节点；1、4 是左侧节点；1、2 是两条后腿的节点。目标 Trot 的同步组合为 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>13</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>24</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(13)(24)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">13</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord">24</span><span class="mclose">)</span></span></span></span></span>，Pace 为 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>14</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>23</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(14)(23)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">14</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord">23</span><span class="mclose">)</span></span></span></span></span>，Bound 为 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>12</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>34</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(12)(34)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">12</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord">34</span><span class="mclose">)</span></span></span></span></span>。这一对应按原文表 1 与附录 C 的刺激节点清单整理。<a href="https://doi.org/10.1177/02783649251364286">论文表1、附录C</a>。</p>
+<h3>3.2 刺激参数的含义</h3>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>单位或范围说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>f</mi><mi>h</mi></msup></mrow><annotation encoding="application/x-tex">f^h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0435em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">h</span></span></span></span></span></span></span></span></span></span></span></span></td>
+<td>髋层神经模型的驱动幅值参数；选定节点在刺激时采用临时增强值</td>
+<td>不是关节角，也不是直接施加的电机力矩</td>
+</tr>
+<tr>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">R_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>刺激增益比</td>
+<td>无量纲</td>
+</tr>
+<tr>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">T_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>刺激的总持续时间</td>
+<td>秒</td>
+</tr>
+<tr>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">T_R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>刺激上升沿持续时间</td>
+<td>秒</td>
+</tr>
+<tr>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>F</mi></msub></mrow><annotation encoding="application/x-tex">T_F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>刺激下降沿持续时间</td>
+<td>秒</td>
+</tr>
+<tr>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mi>R</mi></msub><mo>=</mo><msub><mi>T</mi><mi>R</mi></msub><mi mathvariant="normal">/</mi><msub><mi>T</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">\eta_R=T_R/T_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">η</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>上升沿占总时长的比例</td>
+<td>无量纲</td>
+</tr>
+<tr>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mi>F</mi></msub><mo>=</mo><msub><mi>T</mi><mi>F</mi></msub><mi mathvariant="normal">/</mi><msub><mi>T</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">\eta_F=T_F/T_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">η</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>下降沿占总时长的比例</td>
+<td>无量纲</td>
+</tr>
+</tbody></table>
+</div>
+<p>刺激结束后，驱动回到目标步态的正常设置。原文附录 C 使用经过平移、缩放的对数曲线构造上升沿和下降沿；以下只列原始参数及其时间含义，不将其另行改写成未经核查的连续刺激公式。<a href="https://doi.org/10.1177/02783649251364286">论文附录C、式16</a>。</p>
+<h3>3.3 七组刺激配置</h3>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>转换</th>
+<th>策略</th>
+<th>刺激节点</th>
+<th align="right"><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">R_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></th>
+<th align="right"><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">T_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> / s</th>
+<th align="right"><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">\eta_R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">η</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></th>
+<th align="right"><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mi>F</mi></msub></mrow><annotation encoding="application/x-tex">\eta_F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">η</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pronk→Walk</td>
+<td>Power Pair</td>
+<td>1、3</td>
+<td align="right">2.0</td>
+<td align="right">0.10</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+</tr>
+<tr>
+<td>Pronk→Bound</td>
+<td>Power Pair</td>
+<td>1、2</td>
+<td align="right">2.0</td>
+<td align="right">0.14</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+</tr>
+<tr>
+<td>Bound→Walk</td>
+<td>Wait &amp; Power Pair</td>
+<td>1、3</td>
+<td align="right">2.2</td>
+<td align="right">0.20</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+</tr>
+<tr>
+<td>Bound→Trot</td>
+<td>Wait &amp; Power Pair</td>
+<td>1、3</td>
+<td align="right">1.8</td>
+<td align="right">0.40</td>
+<td align="right">0.4</td>
+<td align="right">0.4</td>
+</tr>
+<tr>
+<td>Bound→Pace</td>
+<td>Wait &amp; Power Pair</td>
+<td>1、4</td>
+<td align="right">2.0</td>
+<td align="right">0.20</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+</tr>
+<tr>
+<td>Pronk→Trot</td>
+<td>Wait &amp; Power Pair</td>
+<td>1、3</td>
+<td align="right">2.6</td>
+<td align="right">0.07</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+</tr>
+<tr>
+<td>Pronk→Pace</td>
+<td>Wait &amp; Power Pair</td>
+<td>1、4</td>
+<td align="right">2.6</td>
+<td align="right">0.09</td>
+<td align="right">0.1</td>
+<td align="right">0.1</td>
+</tr>
+</tbody></table>
+</div>
+<p>数据来自论文附录 C 第 19–20 页；公开代码对应 <code>init_powerpair_strategy()</code> 和 <code>set_powerpair_strategy()</code>。<a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/stein/implementations.py">代码</a>。</p>
+<p><strong>一个直接的时间算例：</strong> Pronk→Trot 的刺激总长为 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.07</mn></mrow><annotation encoding="application/x-tex">0.07</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.07</span></span></span></span></span> s，上升沿与下降沿分别占 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.1</mn></mrow><annotation encoding="application/x-tex">0.1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.1</span></span></span></span></span>，所以：</p>
+<div class="math-display" tabindex="0" aria-label="数学公式，可横向滚动"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>T</mi><mi>R</mi></msub><mo>=</mo><msub><mi>T</mi><mi>F</mi></msub><mo>=</mo><mn>0.1</mn><mo>×</mo><mn>0.07</mn><mo>=</mo><mn>0.007</mn><mtext> </mtext><mi mathvariant="normal">s</mi><mo>=</mo><mn>7</mn><mtext> </mtext><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">s</mi></mrow><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">T_R=T_F=0.1\times0.07=0.007\ \mathrm{s}=7\ \mathrm{ms}.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">F</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.07</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.007</span><span class="mspace"> </span><span class="mord mathrm">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">7</span><span class="mspace"> </span><span class="mord"><span class="mord mathrm">ms</span></span><span class="mord">.</span></span></span></span></span></div>
+<p>其余时间为 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.07</mn><mo>−</mo><mn>0.007</mn><mo>−</mo><mn>0.007</mn><mo>=</mo><mn>0.056</mn></mrow><annotation encoding="application/x-tex">0.07-0.007-0.007=0.056</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.07</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.007</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.007</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.056</span></span></span></span></span> s，即 56 ms。这里计算的是刺激各时段的长度；它不表示线性上升或线性下降，也不等于机器人完整切换和恢复所需时间。</p>
+<h2>4. Wait 所用的周期位置指标</h2>
+<p>论文利用节点 1 的信号和导数分支定义：</p>
+<div class="math-display" tabindex="0" aria-label="数学公式，可横向滚动"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>F</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mrow><mo fence="true">{</mo><mtable rowspacing="0.36em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><msub><mi>x</mi><mn>1</mn></msub><mo separator="true">,</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><msub><mover accent="true"><mi>x</mi><mo>˙</mo></mover><mn>1</mn></msub><mo>≥</mo><mn>0</mn><mo separator="true">,</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mn>2</mn><mo>−</mo><msub><mi>x</mi><mn>1</mn></msub><mo separator="true">,</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><msub><mover accent="true"><mi>x</mi><mo>˙</mo></mover><mn>1</mn></msub><mo>&lt;</mo><mn>0.</mn></mrow></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">F(x_1)=
+\begin{cases}
+x_1,&amp;\dot x_1\ge0,\\
+2-x_1,&amp;\dot x_1&lt;0.
+\end{cases}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">{</span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6679em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1111em;"><span class="mord">˙</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord">0</span><span class="mpunct">,</span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6679em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1111em;"><span class="mord">˙</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord">0.</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div>
+<p>这里 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">x_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 是节点 1 的内部状态，<span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>x</mi><mo>˙</mo></mover><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\dot x_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8179em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6679em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1111em;"><span class="mord">˙</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 是它的变化速度。虽然原文把函数简写为 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">F(x_1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span>，判断时实际还需要导数的符号。以相同的 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>=</mo><mn>0.4</mn></mrow><annotation encoding="application/x-tex">x_1=0.4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.4</span></span></span></span></span> 为例，上升分支得到 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mn>0.4</mn></mrow><annotation encoding="application/x-tex">F=0.4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.4</span></span></span></span></span>，下降分支得到 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mn>1.6</mn></mrow><annotation encoding="application/x-tex">F=1.6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1.6</span></span></span></span></span>，因此可以区分这两个不同的周期阶段。<a href="https://doi.org/10.1177/02783649251364286">论文附录C、式17</a>。</p>
+<p><strong><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span></span></span></span> 不是均匀增长的归一化相位。</strong> 它使用当前波形高度和上升/下降分支，数值增长速度取决于波形；不能把 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mn>0.6</mn></mrow><annotation encoding="application/x-tex">F=0.6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.6</span></span></span></span></span> 直接说成周期进度 60%，也不能将 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">F/2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mord">/2</span></span></span></span></span> 当成已经证明正确的相位。</p>
+<p>设计者先通过切换试验找出哪些 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span></span></span></span> 区间产生所需结果。运行时收到命令后，检查是否已进入相应区间；若尚未进入，继续原来的节律，等待下一次进入。因而成功窗口是针对所选源步态轨道与转换配置建立的，不能自动推广到任意扰动后的波形或未校准参数。</p>
+<h2>5. 九个等待窗口</h2>
+<h3>5.1 Wait &amp; Switch：四个窗口</h3>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>转换</th>
+<th>原文给出的 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">F(x_1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span> 成功窗口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Walk→Trot</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>1.52</mn><mo separator="true">,</mo><mtext> </mtext><mn>1.70</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1.52,\ 1.70]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1.52</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1.70</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+<tr>
+<td>Walk→Pace</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0.30</mn><mo separator="true">,</mo><mtext> </mtext><mn>0.56</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0.30,\ 0.56]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0.30</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0.56</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+<tr>
+<td>Trot→Pace</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>1.81</mn><mo separator="true">,</mo><mtext> </mtext><mn>1.84</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1.81,\ 1.84]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1.81</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1.84</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+<tr>
+<td>Pace→Trot</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>1.498</mn><mo separator="true">,</mo><mtext> </mtext><mn>1.615</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1.498,\ 1.615]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1.498</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1.615</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+</tbody></table>
+</div>
+<h3>5.2 Wait &amp; Power Pair：五个窗口</h3>
+<div class="table-scroll" role="region" tabindex="0" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>转换</th>
+<th>原文给出的 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">F(x_1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span> 成功窗口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bound→Walk</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0.56</mn><mo separator="true">,</mo><mtext> </mtext><mn>1.693</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0.56,\ 1.693]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0.56</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1.693</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+<tr>
+<td>Bound→Trot</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0.58</mn><mo separator="true">,</mo><mtext> </mtext><mn>1.375</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0.58,\ 1.375]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0.58</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1.375</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+<tr>
+<td>Bound→Pace</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>1.82</mn><mo separator="true">,</mo><mtext> </mtext><mn>1.851</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1.82,\ 1.851]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1.82</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1.851</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+<tr>
+<td>Pronk→Trot</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0.52</mn><mo separator="true">,</mo><mtext> </mtext><mn>0.70</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0.52,\ 0.70]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0.52</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0.70</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+<tr>
+<td>Pronk→Pace</td>
+<td><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>1.75</mn><mo separator="true">,</mo><mtext> </mtext><mn>2.00</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1.75,\ 2.00]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1.75</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2.00</span><span class="mclose">]</span></span></span></span></span></td>
+</tr>
+</tbody></table>
+</div>
+<p>窗口来自论文附录 C 第 21 页。公开代码通过相邻 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">x_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 数值的增减关系判断分支，再对 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">x_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 施加相应区间条件；入口分别是 <code>set_wait_switch()</code> 与 <code>set_wait_powerpair()</code>。表中保留论文的区间写法，实际代码多使用严格不等式，复现时应以明确的采样约定和边界判断为准。<a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/stein/implementations.py">代码</a>。</p>
+<p>例如，Walk→Trot 的 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>∈</mo><mo stretchy="false">[</mo><mn>1.52</mn><mo separator="true">,</mo><mn>1.70</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">F\in[1.52,1.70]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1.52</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1.70</span><span class="mclose">]</span></span></span></span></span> 位于下降分支，此时 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mn>2</mn><mo>−</mo><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">F=2-x_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>，对应 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>∈</mo><mo stretchy="false">[</mo><mn>0.30</mn><mo separator="true">,</mo><mn>0.48</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">x_1\in[0.30,0.48]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6891em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0.30</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0.48</span><span class="mclose">]</span></span></span></span></span>，同时要求 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">x_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 正在减小。只检查 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">x_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> 的范围而忽略升降分支，会选中错误的执行阶段。</p>
+<p>原文图 12 展示过 Pronk→Trot 的具体例子：在 9.1 s 收到命令并立即执行时失败；仍在 9.1 s 收到命令，但等待至 9.1342 s 的成功窗口再执行时成功。这个例子中的等待为 34.2 ms，随后还要经历刺激和节律过渡；等待时长、刺激时长与整机恢复时长是三个不同的量。<a href="https://doi.org/10.1177/02783649251364286">论文附录C、图12</a>。</p>
+<h2>6. 连续状态并不自动保证连续目标角</h2>
+<p>切换时保留神经状态，可以使 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo separator="true">,</mo><mi>z</mi></mrow><annotation encoding="application/x-tex">x,y,z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span></span> 在参数更换时保持连续。但执行网络的输入还包括数值导数和步态编码：</p>
+<ul>
+<li>更换参数可能使 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>x</mi><mo>˙</mo></mover></mrow><annotation encoding="application/x-tex">\dot x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6679em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1111em;"><span class="mord">˙</span></span></span></span></span></span></span></span></span></span></span> 发生跳变。</li>
+<li>当前步态的 one-hot 编码可能离散变化。</li>
+<li>训练损失没有显式要求两种步态条件下的输出在切换点完全相接。</li>
+</ul>
+<p>因此，不能只凭 <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span></span> 连续就推断目标角连续，更不能推断关节速度、力矩和接触力都平滑。固定步态且全部输入连续时，ReLU MLP 本身是连续映射；跨步态切换是否满足这个前提，需要检查完整输入与输出链。这是依据公开结构作出的机制分析，不是论文已经给出的通用平滑性证明。<a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/execution_neural_network/mlp.py">MLP 实现</a>；<a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/gait_and_transition/process_network.py">特征构造与推理</a>。</p>
+<p>实际复现还应同时核对收到命令、真正执行换参/刺激、改变执行网络步态编码这三个时刻。普通演示中的 CPG 时间和截取后的机器人仿真时间不应混用，版本细节见<a href="../source-notes.html">来源与复现说明</a>。</p>
+<h2>7. 直接查阅的原始来源</h2>
+<ol>
+<li><a href="https://doi.org/10.1177/02783649251364286">Liu 等论文，DOI 10.1177/02783649251364286</a>：§4、附录C、图9–12。</li>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/stein/implementations.py">Stein 网络及切换策略</a>：策略分类、刺激配置、等待判断。</li>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/src/cpg_go1_simulation/stein/base.py">各步态的基本动力学参数</a>：<code>get_neuron_params()</code>。</li>
+<li><a href="https://github.com/ImDipsy/cpg_go1_simulation/blob/cef012f12fed7316e307034d48f9c13df909de15/examples/demo_video4_gait_transition.py">物理仿真的切换演示</a>：读取 CPG 数据、构造执行网络输入、设置关节目标并推进仿真。</li>
+</ol>
+<footer class="article-footer"><a href="#top">回到本页开头</a> · <a href="../index.html">返回正文</a></footer></article></main>
+</body>
+</html>

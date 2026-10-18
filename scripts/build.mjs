@@ -60,6 +60,7 @@ export async function readPosts(root, config) {
       readingTime: Math.max(1, Number(attributes.readingTime) || Math.ceil(rendered.plainText.length / 400)),
       featured: attributes.featured === true, sample: attributes.sample === true,
       ...rendered, url: withBasePath(`/posts/${slug}/`, config.basePath),
+      toc: attributes.toc === false ? [] : rendered.toc,
     });
   }
   return posts.sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug));
