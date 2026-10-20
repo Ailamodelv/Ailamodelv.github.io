@@ -8,6 +8,9 @@
   "url": "https://xiaoyong-daydayup.github.io",
   "basePath": "",
   "language": "zh-CN",
+  "courses": [
+    { "slug": "rl-math", "title": "强化学习的数学原理", "category": "基础知识学习", "description": "跟随西湖大学赵世钰课程，按课次整理基本概念、数学推导与学习理解。" }
+  ],
   "categories": [
     { "slug": "fundamentals", "title": "基础知识学习", "description": "记下概念、推导，以及自己还没弄明白的地方。" },
     { "slug": "papers", "title": "文献分享", "description": "保存读过的论文、阅读批注与值得回看的思路。" },

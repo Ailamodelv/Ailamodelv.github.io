@@ -43,6 +43,16 @@ category: 基础知识学习
 
 打开 [文章目录](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/tree/main/content/posts)，点进文件，再点铅笔图标。改好后点击 **Commit changes**，网站会自动更新。
 
+## 更新《强化学习的数学原理》课程
+
+这门课程已放在「基础知识学习」下，拥有独立的[课程目录](https://xiaoyong-daydayup.github.io/courses/rl-math/)。
+
+1. 打开 GitHub 上的[课程笔记文件夹](https://github.com/xiaoyong-daydayup/xiaoyong-daydayup.github.io/tree/main/content/courses/rl-math)。
+2. 点击 **Add file → Upload files**，上传下一课的 Markdown。文件名以课次开头，例如 `02-贝尔曼公式.md`、`03-贝尔曼最优公式.md`。
+3. 点击 **Commit changes**，等待发布完成。
+
+不必填写模板或栏目。正文第一行写 `# 第二课：贝尔曼公式` 即可确定文章标题。网站会自动归入这门课程和「基础知识学习」，按文件名开头的数字排序，并更新课程目录、首页和上一课／下一课导航。修改已发布的笔记时，保留原文件名以保持文章网址不变。
+
 ## 想排版时再用 Markdown
 
 普通文字直接写即可，以下格式按需使用：
@@ -61,5 +71,7 @@ category: 基础知识学习
 ## 论文笔记里的公式与附件
 
 公式可以直接保留 Markdown 写法：行内用 `$x_i$`，独立公式在上下各放一行 `$$`。网站会自动排版，不用另外截图。
+
+也支持 GitHub 的保护式行内公式（美元符号内包一对反引号），以及语言标记为 `math` 的三反引号公式块。课程笔记原有的这两种写法可以直接保留。参考式链接，例如 `[课程][course]` 配合文末的 `[course]: https://...`，也会正常显示。
 
 附件放入 `assets/downloads/`，正文用 `[下载附件](/assets/downloads/文件名.zip)` 链接。带图片、交互页和附录的整套资料可保留目录结构放入 `assets/reading/资料名/`，正文链接改为对应的 `/assets/reading/资料名/...` 路径。上传文件后仍需提交更改，网站才会更新。

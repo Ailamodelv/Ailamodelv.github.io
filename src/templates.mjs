@@ -1,9 +1,13 @@
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const dateLabel = date => String(date).slice(0, 10).replaceAll('-', '.');
 
-export function renderPage({ page, config, posts = [], roadmap = {}, post, body = '', toc = [], category }) {
+export function renderPage({ page, config, posts = [], roadmap = {}, post, body = '', toc = [], category, course }) {
   const href = path => `${config.basePath || ''}${path}`;
   const categories = config.categories || [];
+  const courses = config.courses || [];
+  const courseUrl = item => href(`/courses/${item.slug}/`);
+  const courseLessons = item => posts.filter(note => note.course === item.slug).sort((a, b) => (a.lesson ?? Infinity) - (b.lesson ?? Infinity) || a.slug.localeCompare(b.slug, 'zh-CN', { numeric: true }));
+  const currentCourse = course || courses.find(item => item.slug === post?.course);
   const categoryPath = item => `/categories/${item.slug}/`;
   const categoryUrl = name => {
     const item = categories.find(item => item.title === name);
@@ -12,20 +16,21 @@ export function renderPage({ page, config, posts = [], roadmap = {}, post, body 
   const github = config.github ? `https://github.com/${encodeURIComponent(config.github)}` : '';
   const pageNames = { home: '首页', posts: '全部记录', about: '关于', roadmap: '学习计划', '404': '页面未找到' };
   const pagePaths = { home: '/', posts: '/posts/', about: '/about/', roadmap: '/roadmap/', '404': '/404.html' };
-  const title = page === 'post' ? post.title : page === 'category' ? category.title : pageNames[page];
-  const currentPath = page === 'post' ? post.url : href(page === 'category' ? categoryPath(category) : pagePaths[page]);
-  const description = page === 'category' ? category.description : post?.summary || config.description;
+  const title = page === 'post' ? post.title : page === 'category' ? category.title : page === 'course' ? course.title : pageNames[page];
+  const currentPath = page === 'post' ? post.url : page === 'course' ? courseUrl(course) : href(page === 'category' ? categoryPath(category) : pagePaths[page]);
+  const description = page === 'course' ? course.description : page === 'category' ? category.description : post?.summary || config.description;
   const canonical = config.url ? `${config.url}${currentPath}` : '';
-  const selectedCategory = page === 'category' ? category.title : post?.category;
+  const selectedCategory = page === 'category' ? category.title : page === 'course' ? course.category : post?.category;
   const sampleNotice = items => items.some(item => item.sample)
     ? '<p class="sample-hint">带“示例”标记的文章为占位内容。</p>' : '';
 
   function noteRow(item) {
+    const itemCourse = courses.find(course => course.slug === item.course);
     return `<article class="note-row" data-post data-post-category="${escape(item.category)}" data-search="${escape([item.title, item.summary, item.category, ...item.tags, item.plainText].join(' '))}">
       <time class="note-date" datetime="${escape(item.date)}">${dateLabel(item.date)}</time>
       <div class="note-content"><h3><a href="${escape(item.url)}">${escape(item.title)}</a></h3>
         ${item.summary ? `<p class="note-summary">${escape(item.summary)}</p>` : ''}
-        <div class="note-meta"><a href="${categoryUrl(item.category)}">${escape(item.category)}</a>${item.sample ? '<span>示例</span>' : ''}</div>
+        <div class="note-meta"><a href="${categoryUrl(item.category)}">${escape(item.category)}</a>${itemCourse ? `<a href="${courseUrl(itemCourse)}">${escape(itemCourse.title)}</a>` : ''}${item.sample ? '<span>示例</span>' : ''}</div>
       </div>
     </article>`;
   }
@@ -35,6 +40,15 @@ export function renderPage({ page, config, posts = [], roadmap = {}, post, body 
   function searchBox() {
     return '<div class="search-bar"><label class="sr-only" for="post-search">搜索记录</label><input id="post-search" data-search-input type="search" placeholder="搜索记录…" autocomplete="off"></div>';
   }
+  function courseList(items) {
+    return items.length ? `<section class="course-section" aria-label="课程笔记"><h2 class="course-label">// 课程笔记</h2>${items.map(item => `<a class="course-entry" href="${courseUrl(item)}"><div><h3>${escape(item.title)} <span aria-hidden="true">↗</span></h3><p>${escape(item.description)}</p></div><span class="course-count">${courseLessons(item).length} 篇笔记</span></a>`).join('')}</section>` : '';
+  }
+  function courseNavigation() {
+    if (!currentCourse) return '';
+    const lessons = courseLessons(currentCourse), index = lessons.findIndex(item => item.slug === post.slug);
+    const previous = lessons[index - 1], next = lessons[index + 1];
+    return `<nav class="course-navigation" aria-label="课程上下课"><a href="${courseUrl(currentCourse)}">返回课程目录</a>${previous ? `<a rel="prev" href="${escape(previous.url)}">← ${escape(previous.title)}</a>` : ''}${next ? `<a rel="next" href="${escape(next.url)}">${escape(next.title)} →</a>` : ''}</nav>`;
+  }
 
   let content = '';
   if (page === 'home') {
@@ -42,14 +56,19 @@ export function renderPage({ page, config, posts = [], roadmap = {}, post, body 
   } else if (page === 'posts' || page === 'category') {
     const items = page === 'category' ? posts.filter(item => item.category === category.title) : posts;
     content = `${heading(page === 'category' ? category.title : '全部记录', page === 'category' ? category.description : '按时间整理的个人笔记，保留每个阶段的问题与思考。', page === 'category' ? '栏目' : '归档')}
+      ${page === 'category' ? courseList(courses.filter(item => item.category === category.title)) : ''}
       <section aria-label="记录列表">${page === 'posts' ? searchBox() : ''}<p class="result-count" data-result-count aria-live="polite">${items.length} 篇记录</p>
       ${sampleNotice(items)}<div class="note-list">${items.map(noteRow).join('')}</div><p data-empty ${items.length ? 'hidden' : ''} class="empty-state">${items.length ? '没有匹配的记录。' : '这个栏目还没有记录。'}</p></section>`;
+  } else if (page === 'course') {
+    const lessons = courseLessons(course);
+    content = `<a class="back-link" href="${categoryUrl(course.category)}">← ${escape(course.category)}</a>${heading(course.title, course.description)}<p class="course-progress">按课次阅读 · 已记录 ${lessons.length} 篇 · 持续更新</p><ol class="lesson-list">${lessons.map((item, index) => `<li><a class="lesson-entry" href="${escape(item.url)}"><span class="lesson-number">${String(item.lesson ?? index + 1).padStart(2, '0')}</span><div><h2>${escape(item.title)}</h2><p>${escape(item.summary)}</p><time datetime="${escape(item.date)}">${dateLabel(item.date)}</time></div><span class="lesson-arrow" aria-hidden="true">↗</span></a></li>`).join('')}</ol>${lessons.length ? '' : '<p class="empty-state">课程笔记整理中。</p>'}`;
   } else if (page === 'about') {
     content = `${heading('关于这份学习记录', '人形机器人领域的个人学习笔记。', config.author)}
       <div class="about-prose prose"><h2>记录自己的学习过程</h2><p>我想在这里留下学习人形机器人时的过程：一个概念是怎样理解的，一篇论文为什么值得记住，一个问题又是怎样被定位和解决的。</p><p>笔记会带有当时的背景、疑问和局限。有些结论还需要验证，有些想法以后也可能改变，更新和修正同样属于记录的一部分。</p><h2>目前的四个栏目</h2><dl class="about-columns">${categories.map(item => `<div><dt><a href="${href(categoryPath(item))}">${escape(item.title)}</a></dt><dd>${escape(item.description)}</dd></div>`).join('')}</dl><h2>保留上下文，方便以后回看</h2><p>基础笔记里保留推导与疑问，文献记录里保留出处与个人批注，debug 记录里保留环境、报错和排查过程。观点闲谈则留给那些暂时还没有形成完整结论的想法。</p>${sampleNotice(posts)}${github ? `<p><a href="${github}" target="_blank" rel="noopener noreferrer">GitHub · ${escape(config.github)}</a></p>` : ''}</div>`;
   } else if (page === 'post') {
     content = `<a class="back-link" href="${categoryUrl(post.category)}">← ${escape(post.category)}</a><header class="article-heading"><h1>${escape(post.title)}</h1>${post.summary ? `<p class="article-deck">${escape(post.summary)}</p>` : ''}<div class="article-meta"><time datetime="${escape(post.date)}">${dateLabel(post.date)}</time><span>约 ${post.readingTime} 分钟</span>${post.sample ? '<span class="sample-badge">示例</span>' : ''}</div></header>
-      ${toc.length ? `<details class="toc"><summary>目录</summary><nav>${toc.map(item => `<a class="toc-level-${item.level}" href="#${escape(item.id)}">${escape(item.text)}</a>`).join('')}</nav></details>` : ''}<article class="prose" id="article-body">${post.sample ? '<aside class="sample-notice">这篇文章为写作示例，尚未替换为我的实际学习记录。</aside>' : ''}${body}<div class="article-tags">${post.tags.map(tag => `<span># ${escape(tag)}</span>`).join('')}</div></article>`;
+      ${currentCourse ? `<aside class="course-context"><a href="${courseUrl(currentCourse)}">${escape(currentCourse.title)} · 课程目录</a>${post.lesson !== null ? `<span>第 ${post.lesson} 课</span>` : ''}</aside>` : ''}
+      ${toc.length ? `<details class="toc"><summary>目录</summary><nav>${toc.map(item => `<a class="toc-level-${item.level}" href="#${escape(item.id)}">${escape(item.text)}</a>`).join('')}</nav></details>` : ''}<article class="prose" id="article-body">${post.sample ? '<aside class="sample-notice">这篇文章为写作示例，尚未替换为我的实际学习记录。</aside>' : ''}${body}<div class="article-tags">${post.tags.map(tag => `<span># ${escape(tag)}</span>`).join('')}</div></article>${courseNavigation()}`;
   } else if (page === 'roadmap') {
     content = `${heading('学习计划', '')}<div class="prose plan-prose">${(roadmap.phases || []).length ? roadmap.phases.map(phase => `<section id="${escape(phase.id)}"><h2>${escape(phase.title)}</h2><p>${escape(phase.description)}</p><ul>${phase.topics.map(topic => `<li>${escape(topic)}</li>`).join('')}</ul></section>`).join('') : '<p>暂时还没有学习计划。</p>'}</div>`;
   } else {

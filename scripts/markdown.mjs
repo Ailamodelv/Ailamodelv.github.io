@@ -59,26 +59,35 @@ export function safeImage(raw, basePath = '') {
   return withBasePath(assetPath, base);
 }
 
-export function renderInline(text, basePath = '', depth = 0) {
+export function renderInline(text, basePath = '', depth = 0, references = new Map()) {
   if (depth > 3) return escapeHtml(text);
-  const token = /`(?<code>[^`\n]+)`|(?<!\\)\$(?!\$)(?<math>[^\n$]+?)(?<!\\)\$(?!\$)|\*\*(?<bold>[^*\n]+)\*\*|\*(?<em>[^*\n]+)\*|!\[(?<imageAlt>[^\]\n]*)\]\((?<imageSrc>[^)\s]+)(?:\s+"(?<imageTitle>[^"]*)")?\)|\[(?<label>[^\]\n]+)\]\((?<href>[^)\s]+)(?:\s+"(?<title>[^"]*)")?\)|(?<lineBreak>\n)/g;
+  const token = /(?<!\\)\$`(?<protectedMath>[^`\n]+)`\$|`(?<code>[^`\n]+)`|(?<!\\)\$(?!\$)(?<math>[^\n$]+?)(?<!\\)\$(?!\$)|\*\*(?<bold>[^*\n]+)\*\*|\*(?<em>[^*\n]+)\*|!\[(?<imageAlt>[^\]\n]*)\]\((?<imageSrc>[^)\s]+)(?:\s+"(?<imageTitle>[^"]*)")?\)|\[(?<label>[^\]\n]+)\]\((?<href>[^)\s]+)(?:\s+"(?<title>[^"]*)")?\)|(?<reference>\[(?<referenceLabel>[^\]\n]+)\]\[(?<referenceId>[^\]\n]*)\])|(?<lineBreak>\n)/g;
   let result = '', cursor = 0, match;
   while ((match = token.exec(text))) {
     result += escapeHtml(text.slice(cursor, match.index));
     const groups = match.groups;
-    if (groups.code !== undefined) result += `<code>${escapeHtml(groups.code)}</code>`;
+    if (groups.protectedMath !== undefined) result += `<span class="math-inline">${renderMath(groups.protectedMath)}</span>`;
+    else if (groups.code !== undefined) result += `<code>${escapeHtml(groups.code)}</code>`;
     else if (groups.math !== undefined) result += `<span class="math-inline">${renderMath(groups.math)}</span>`;
-    else if (groups.bold !== undefined) result += `<strong>${renderInline(groups.bold, basePath, depth + 1)}</strong>`;
-    else if (groups.em !== undefined) result += `<em>${renderInline(groups.em, basePath, depth + 1)}</em>`;
+    else if (groups.bold !== undefined) result += `<strong>${renderInline(groups.bold, basePath, depth + 1, references)}</strong>`;
+    else if (groups.em !== undefined) result += `<em>${renderInline(groups.em, basePath, depth + 1, references)}</em>`;
     else if (groups.lineBreak !== undefined) result += '<br>';
     else if (groups.imageAlt !== undefined) {
       const src = safeImage(groups.imageSrc, basePath);
       const title = groups.imageTitle ? ` title="${escapeHtml(groups.imageTitle)}"` : '';
       result += src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(groups.imageAlt)}" loading="lazy" decoding="async"${title}>` : escapeHtml(groups.imageAlt);
     }
+    else if (groups.reference !== undefined) {
+      const reference = references.get((groups.referenceId || groups.referenceLabel).trim().replace(/\s+/g, ' ').toLowerCase());
+      if (!reference) result += escapeHtml(groups.reference);
+      else {
+        const href = safeLink(reference.href, basePath), label = renderInline(groups.referenceLabel, basePath, depth + 1, references);
+        result += href ? `<a href="${escapeHtml(href)}"${reference.title ? ` title="${escapeHtml(reference.title)}"` : ''}>${label}</a>` : label;
+      }
+    }
     else {
       const href = safeLink(groups.href, basePath);
-      const label = renderInline(groups.label, basePath, depth + 1);
+      const label = renderInline(groups.label, basePath, depth + 1, references);
       const title = groups.title ? ` title="${escapeHtml(groups.title)}"` : '';
       result += href ? `<a href="${escapeHtml(href)}"${title}>${label}</a>` : label;
     }
@@ -126,8 +135,24 @@ function splitTableRow(line) {
   return cells;
 }
 
-export function renderMarkdown(source, { basePath = '' } = {}) {
+export function renderMarkdown(source, { basePath = '', references: inheritedReferences = new Map() } = {}) {
   const lines = String(source).replace(/\r\n?/g, '\n').split('\n');
+  const references = new Map(inheritedReferences);
+  let inFence = false, inMath = false;
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index];
+    if (/^```/.test(line)) { inFence = !inFence; continue; }
+    if (inFence) continue;
+    if (line.trim() === '$$') { inMath = !inMath; continue; }
+    if (inMath) continue;
+    const definition = line.match(/^\s{0,3}\[([^\]\n]+)\]:\s*(\S+)(?:\s+"([^"]*)")?\s*$/);
+    if (definition) {
+      const key = definition[1].trim().replace(/\s+/g, ' ').toLowerCase();
+      if (!references.has(key)) references.set(key, { href: definition[2], title: definition[3] });
+      lines[index] = '';
+    }
+  }
+  const inline = text => renderInline(text, basePath, 0, references);
   const html = [], toc = [], ids = new Set();
   const blockStart = (line) => /^(?:\s*$|#{1,6}\s|```|\$\$|<a id="|---\s*$|\s*>\s?|\s*[-*+]\s+|\s*\d+[.)]\s+)/.test(line);
   const tableAt = (index) => {
@@ -154,7 +179,7 @@ export function renderMarkdown(source, { basePath = '' } = {}) {
     if (figure) {
       const src = safeImage(figure[2], basePath);
       if (src) {
-        html.push(`<figure class="article-figure"><a href="${escapeHtml(src)}" target="_blank" rel="noopener noreferrer" aria-label="查看原图：${escapeHtml(figure[1])}">${renderInline(line, basePath)}</a>${figure[3] ? `<figcaption>${escapeHtml(figure[3])}</figcaption>` : ''}</figure>`);
+        html.push(`<figure class="article-figure"><a href="${escapeHtml(src)}" target="_blank" rel="noopener noreferrer" aria-label="查看原图：${escapeHtml(figure[1])}">${inline(line)}</a>${figure[3] ? `<figcaption>${escapeHtml(figure[3])}</figcaption>` : ''}</figure>`);
         i++; continue;
       }
     }
@@ -163,7 +188,7 @@ export function renderMarkdown(source, { basePath = '' } = {}) {
       const code = []; i++;
       while (i < lines.length && !/^```\s*$/.test(lines[i])) code.push(lines[i++]);
       if (i < lines.length) i++;
-      html.push(`<pre><code${fence[1] ? ` class="language-${escapeHtml(fence[1])}"` : ''}>${escapeHtml(code.join('\n'))}</code></pre>`);
+      html.push(fence[1] === 'math' ? `<div class="math-display">${renderMath(code.join('\n'), true)}</div>` : `<pre><code${fence[1] ? ` class="language-${escapeHtml(fence[1])}"` : ''}>${escapeHtml(code.join('\n'))}</code></pre>`);
       continue;
     }
     const heading = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
@@ -175,24 +200,24 @@ export function renderMarkdown(source, { basePath = '' } = {}) {
       ids.add(id);
       const level = heading[1].length;
       toc.push({ id, text, level });
-      html.push(`<h${level} id="${escapeHtml(id)}">${renderInline(heading[2], basePath)}</h${level}>`); i++; continue;
+      html.push(`<h${level} id="${escapeHtml(id)}">${inline(heading[2])}</h${level}>`); i++; continue;
     }
     const table = tableAt(i);
     if (table) {
       const alignment = table.delimiters.map((cell) => cell.startsWith(':') && cell.endsWith(':') ? 'center' : cell.endsWith(':') ? 'right' : 'left');
-      const headers = table.headers.map((cell, col) => `<th scope="col" class="table-align-${alignment[col]}">${renderInline(cell, basePath)}</th>`).join('');
+      const headers = table.headers.map((cell, col) => `<th scope="col" class="table-align-${alignment[col]}">${inline(cell)}</th>`).join('');
       const rows = []; i += 2;
       while (i < lines.length && lines[i].includes('|') && lines[i].trim()) {
         const cells = splitTableRow(lines[i]);
         if (cells.length !== table.headers.length) break;
-        rows.push(`<tr>${cells.map((cell, col) => `<td class="table-align-${alignment[col]}">${renderInline(cell, basePath)}</td>`).join('')}</tr>`); i++;
+        rows.push(`<tr>${cells.map((cell, col) => `<td class="table-align-${alignment[col]}">${inline(cell)}</td>`).join('')}</tr>`); i++;
       }
       html.push(`<div class="table-wrap" role="region" aria-label="文章表格" tabindex="0"><table><thead><tr>${headers}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`); continue;
     }
     if (/^\s*>/.test(line)) {
       const quote = [];
       while (i < lines.length && /^\s*>/.test(lines[i])) quote.push(lines[i++].replace(/^\s*>\s?/, ''));
-      html.push(`<blockquote>${renderMarkdown(quote.join('\n'), { basePath }).html}</blockquote>`); continue;
+      html.push(`<blockquote>${renderMarkdown(quote.join('\n'), { basePath, references }).html}</blockquote>`); continue;
     }
     const list = line.match(/^\s*(?:([-*+])|(\d+)[.)])\s+(.+)$/);
     if (list) {
@@ -200,14 +225,14 @@ export function renderMarkdown(source, { basePath = '' } = {}) {
       while (i < lines.length) {
         const item = lines[i].match(/^\s*(?:([-*+])|(\d+)[.)])\s+(.+)$/);
         if (!item || Boolean(item[2]) !== ordered) break;
-        items.push(`<li>${renderInline(item[3], basePath)}</li>`); i++;
+        items.push(`<li>${inline(item[3])}</li>`); i++;
       }
       const tag = ordered ? 'ol' : 'ul';
       html.push(`<${tag}${ordered && list[2] !== '1' ? ` start="${Number(list[2])}"` : ''}>${items.join('')}</${tag}>`); continue;
     }
     const paragraph = [line]; i++;
     while (i < lines.length && !blockStart(lines[i]) && !tableAt(i)) paragraph.push(lines[i++]);
-    html.push(`<p>${renderInline(paragraph.map((part, index) => part.trim() + (index < paragraph.length - 1 ? / {2,}$/.test(part) ? '\n' : ' ' : '')).join(''), basePath)}</p>`);
+    html.push(`<p>${inline(paragraph.map((part, index) => part.trim() + (index < paragraph.length - 1 ? / {2,}$/.test(part) ? '\n' : ' ' : '')).join(''))}</p>`);
   }
   const plainText = headingText(String(source)).replace(/```[^\n]*\n([\s\S]*?)```/g, '$1').replace(/^[#>\s*-]+/gm, '').replace(/\s+/g, ' ').trim();
   return { html: html.join('\n'), toc, plainText };

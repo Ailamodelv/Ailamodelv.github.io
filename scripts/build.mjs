@@ -11,11 +11,11 @@ const runFile = promisify(execFile);
 
 async function firstPublishedDate(root, file) {
   try {
-    const { stdout } = await runFile('git', ['log', '--follow', '--format=%aI', '--', `content/posts/${file}`], { cwd: root });
+    const { stdout } = await runFile('git', ['log', '--follow', '--format=%aI', '--', file], { cwd: root });
     const first = stdout.trim().split('\n').filter(Boolean).at(-1);
     if (first) return first.slice(0, 10);
   } catch { /* An uncommitted local note can still be previewed. */ }
-  return (await fs.stat(path.join(root, 'content', 'posts', file))).mtime.toISOString().slice(0, 10);
+  return (await fs.stat(path.join(root, file))).mtime.toISOString().slice(0, 10);
 }
 
 export function normalizeConfig(raw, env = process.env) {
@@ -31,31 +31,46 @@ export function normalizeConfig(raw, env = process.env) {
   const categories = raw.categories ?? [];
   if (!Array.isArray(categories) || categories.some(item => !item || !/^[a-z0-9][a-z0-9-]*$/.test(item.slug) || typeof item.title !== 'string' || !item.title.trim())) throw new Error('栏目需要有效的英文 slug 和中文 title。');
   if (new Set(categories.map(item => item.slug)).size !== categories.length || new Set(categories.map(item => item.title)).size !== categories.length) throw new Error('栏目 slug 和 title 不能重复。');
-  return { ...raw, categories, basePath, url, repoUrl: raw.repoUrl ?? '', language: raw.language ?? 'zh-CN' };
+  const courses = raw.courses ?? [];
+  if (!Array.isArray(courses) || courses.some(item => !item || !/^[a-z0-9][a-z0-9-]*$/.test(item.slug) || typeof item.title !== 'string' || !item.title.trim() || !categories.some(category => category.title === item.category))) throw new Error('课程需要有效的 slug、title，以及已有的 category。');
+  if (new Set(courses.map(item => item.slug)).size !== courses.length) throw new Error('课程 slug 不能重复。');
+  return { ...raw, categories, courses, basePath, url, repoUrl: raw.repoUrl ?? '', language: raw.language ?? 'zh-CN' };
 }
 
 export async function readPosts(root, config) {
-  const postsDir = path.join(root, 'content', 'posts');
-  const files = (await fs.readdir(postsDir, { withFileTypes: true })).filter(entry => entry.isFile() && !entry.name.startsWith('.') && (!path.extname(entry.name) || /\.(md|txt)$/i.test(entry.name))).map(entry => entry.name).sort();
+  const directories = [{ directory: 'content/posts' }, ...(config.courses || []).map(course => ({ directory: `content/courses/${course.slug}`, course }))];
+  const files = [];
+  for (const { directory, course } of directories) {
+    let entries;
+    try { entries = await fs.readdir(path.join(root, directory), { withFileTypes: true }); }
+    catch (error) { if (error.code === 'ENOENT' && course) continue; throw error; }
+    for (const entry of entries.filter(entry => entry.isFile() && !entry.name.startsWith('.') && (!path.extname(entry.name) || /\.(md|txt)$/i.test(entry.name))).sort((a, b) => a.name.localeCompare(b.name))) {
+      files.push({ file: entry.name, sourcePath: `${directory}/${entry.name}`, course });
+    }
+  }
   const posts = [];
   const slugs = new Map();
-  for (const file of files) {
-    const { attributes, body } = parseFrontmatter(await fs.readFile(path.join(postsDir, file), 'utf8'));
+  for (const { file, sourcePath, course } of files) {
+    const { attributes, body } = parseFrontmatter(await fs.readFile(path.join(root, sourcePath), 'utf8'));
     if (attributes.draft === true) continue;
     const filename = file.replace(/\.(md|txt)$/i, '');
-    const slug = filename.normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '') || `note-${createHash('sha256').update(file).digest('hex').slice(0, 12)}`;
+    const filenameSlug = filename.normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '') || `note-${createHash('sha256').update(file).digest('hex').slice(0, 12)}`;
+    const slug = course ? `${course.slug}-${filenameSlug}` : filenameSlug;
     if (slugs.has(slug)) throw new Error(`${file} 与 ${slugs.get(slug)} 会生成同一个网址，请给其中一篇换个不同的文件名。`);
     slugs.set(slug, file);
     const title = attributes.title || body.trimStart().match(/^#\s+(.+?)(?:\s+#+)?\s*(?:\n|$)/)?.[1] || filename;
-    const date = attributes.date || await firstPublishedDate(root, file);
-    const category = attributes.category || (config.categories?.some(item => item.title === '观点闲谈') ? '观点闲谈' : config.categories?.[0]?.title || '学习笔记');
+    const date = attributes.date || await firstPublishedDate(root, sourcePath);
+    const category = course?.category || attributes.category || (config.categories?.some(item => item.title === '观点闲谈') ? '观点闲谈' : config.categories?.[0]?.title || '学习笔记');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date) {
       throw new Error(`${file} 的日期应为 YYYY-MM-DD，也可以删去 date 让网站自动填写。`);
     }
-    const rendered = renderMarkdown(body, config);
+    const firstHeading = body.trimStart().match(/^#\s+(.+?)(?:\s+#+)?\s*(?:\n|$)/);
+    const articleBody = firstHeading?.[1] === title ? body.trimStart().slice(firstHeading[0].length) : body;
+    const rendered = renderMarkdown(articleBody, config);
     if (config.categories?.length && !config.categories.some(item => item.title === category)) throw new Error(`${file} 的 category 必须使用 site.config.json 中的栏目名称。`);
     posts.push({
       slug, title, date, category,
+      course: course?.slug || '', lesson: course && /^\d+/.test(filename) ? Number(filename.match(/^\d+/)[0]) : null,
       tags: attributes.tags || [], summary: attributes.summary || `${rendered.plainText.slice(0, 100)}…`,
       readingTime: Math.max(1, Number(attributes.readingTime) || Math.ceil(rendered.plainText.length / 400)),
       featured: attributes.featured === true, sample: attributes.sample === true,
@@ -78,6 +93,7 @@ export function makeRss(config, posts) {
 export function makeSitemap(config, posts) {
   const pages = ['/', '/posts/', '/roadmap/', '/about/'].map((route) => `<url><loc>${escapeHtml(absoluteUrl(config, route))}</loc></url>`);
   pages.push(...(config.categories || []).map(category => `<url><loc>${escapeHtml(absoluteUrl(config, `/categories/${category.slug}/`))}</loc></url>`));
+  pages.push(...(config.courses || []).map(course => `<url><loc>${escapeHtml(absoluteUrl(config, `/courses/${course.slug}/`))}</loc></url>`));
   pages.push(...posts.map((post) => `<url><loc>${escapeHtml(absoluteUrl(config, `/posts/${post.slug}/`))}</loc><lastmod>${post.date}</lastmod></url>`));
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.join('\n')}\n</urlset>\n`;
 }
@@ -124,6 +140,7 @@ export async function build({ root = projectRoot, env = process.env, renderer } 
   }
   for (const post of posts) await write(`posts/${post.slug}/index.html`, renderPage({ ...context, page: 'post', post, body: post.html, toc: post.toc }));
   for (const category of config.categories) await write(`categories/${category.slug}/index.html`, renderPage({ ...context, page: 'category', category }));
+  for (const course of config.courses) await write(`courses/${course.slug}/index.html`, renderPage({ ...context, page: 'course', course }));
   await fs.mkdir(path.join(output, 'assets'), { recursive: true });
   await copyAssets(path.join(root, 'assets'), path.join(output, 'assets'));
   await write('rss.xml', makeRss(config, posts));

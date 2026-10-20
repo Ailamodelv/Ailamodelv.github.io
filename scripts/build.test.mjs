@@ -123,6 +123,25 @@ test('bibliographic emphasis and Markdown hard breaks preserve readable lines', 
   assert.ok(html.includes('<hr>'));
 });
 
+test('GitHub protected inline math and math fences render without changing code examples', () => {
+  const source = '$`\\pi(a\\mid s)`$\n\n```math\n\\sum_a \\pi(a\\mid s)=1\n```\n\n```markdown\n$`x_i`$\n```';
+  const { html } = renderMarkdown(source);
+  assert.equal((html.match(/class="katex"/g) || []).length, 2);
+  assert.equal((html.match(/class="math-display"/g) || []).length, 1);
+  assert.ok(html.includes('<code class="language-markdown">$`x_i`$</code>'));
+  assert.ok(!html.includes('math-error'));
+});
+
+test('reference links resolve in paragraphs, tables and quotes with URL safety', () => {
+  const { html } = renderMarkdown('[课程][official]\n\n> [资料][Official]\n\n| 入口 |\n| --- |\n| [本地][local] |\n\n[坏链接][bad]\n\n```text\n[not-a-definition]: https://example.org\n```\n\n[official]: https://example.com/course "课程入口"\n[local]: /posts/\n[bad]: javascript:alert', { basePath: '/notes' });
+  assert.equal((html.match(/href="https:\/\/example.com\/course"/g) || []).length, 2);
+  assert.ok(html.includes('href="/notes/posts/"'));
+  assert.ok(html.includes('title="课程入口"'));
+  assert.ok(!html.includes('href="javascript:'));
+  assert.ok(html.includes('[not-a-definition]: https://example.org'));
+  assert.ok(!html.includes('[official]:'));
+});
+
 test('configuration uses Pages origin and normalizes root and project paths', () => {
   assert.equal(normalizeBasePath('/'), '');
   assert.equal(normalizeBasePath('notes/'), '/notes');
@@ -234,6 +253,48 @@ test('RSS and sitemap escape XML special characters', () => {
   assert.ok(makeRss(config, []).includes('<title>A &amp; B</title>'));
   assert.ok(makeRss(config, []).includes('&lt;notes&gt;'));
   assert.ok(makeSitemap(config, []).includes('https://example.com/'));
+});
+
+test('course folders infer membership, sort lessons and generate category and adjacent links', async t => {
+  const root = await fixture(t);
+  const course = { slug: 'rl-math', title: '强化学习的数学原理', category: '基础知识学习', description: '按课次记录' };
+  const categories = [{ slug: 'fundamentals', title: '基础知识学习' }, { slug: 'thoughts', title: '观点闲谈' }];
+  await fs.writeFile(path.join(root, 'site.config.json'), JSON.stringify({ title: '笔记', categories, courses: [course], url: 'https://learner.github.io' }));
+  const directory = path.join(root, 'content/courses/rl-math');
+  await fs.mkdir(directory, { recursive: true });
+  await fs.writeFile(path.join(directory, '01-basic.md'), '# 第一课：基本概念\n\n第一课正文。');
+  await fs.writeFile(path.join(directory, '02-贝尔曼公式.md'), '# 第二课：贝尔曼公式\n\n第二课正文。');
+  await fs.writeFile(path.join(directory, '10-actor-critic.md'), '# 第十课\n\n第十课正文。');
+  await fs.writeFile(path.join(directory, '03-draft.md'), '---\ndraft: true\n---\n# 未发布');
+  for (const basePath of ['', '/notes']) {
+    const result = await build({ root, env: { BASE_PATH: basePath }, renderer: actualRenderer });
+    const first = result.posts.find(item => item.slug === 'rl-math-01-basic');
+    assert.equal(first.course, 'rl-math');
+    assert.equal(first.lesson, 1);
+    assert.equal(first.category, '基础知识学习');
+    assert.match(first.date, /^\d{4}-\d{2}-\d{2}$/);
+    const coursePage = await fs.readFile(path.join(result.output, 'courses/rl-math/index.html'), 'utf8');
+    assert.ok(coursePage.indexOf('第一课：基本概念') < coursePage.indexOf('第二课：贝尔曼公式'));
+    assert.ok(coursePage.indexOf('第二课：贝尔曼公式') < coursePage.indexOf('第十课'));
+    assert.ok(!coursePage.includes('未发布'));
+    assert.ok(coursePage.includes('已记录 3 篇'));
+    assert.ok(coursePage.includes(`rel="canonical" href="https://learner.github.io${basePath}/courses/rl-math/"`));
+    const article = await fs.readFile(path.join(result.output, 'posts/rl-math-01-basic/index.html'), 'utf8');
+    assert.equal((article.match(/<h1/g) || []).length, 1);
+    assert.ok(article.includes(`href="${basePath}/courses/rl-math/"`));
+    assert.ok(article.includes(`rel="next" href="${basePath}/posts/rl-math-02-贝尔曼公式/"`));
+    assert.ok(!article.includes('rel="prev"'));
+    const second = await fs.readFile(path.join(result.output, 'posts/rl-math-02-贝尔曼公式/index.html'), 'utf8');
+    assert.ok(second.includes(`rel="prev" href="${basePath}/posts/rl-math-01-basic/"`));
+    const basics = await fs.readFile(path.join(result.output, 'categories/fundamentals/index.html'), 'utf8');
+    const thoughts = await fs.readFile(path.join(result.output, 'categories/thoughts/index.html'), 'utf8');
+    assert.ok(basics.includes(`class="course-entry" href="${basePath}/courses/rl-math/"`));
+    assert.ok(!thoughts.includes('class="course-entry"'));
+    assert.ok((await fs.readFile(path.join(result.output, 'sitemap.xml'), 'utf8')).includes(`${basePath}/courses/rl-math/`));
+    assert.ok((await fs.readFile(path.join(result.output, 'rss.xml'), 'utf8')).includes('第一课：基本概念'));
+  }
+  assert.throws(() => normalizeConfig({ categories, courses: [{ ...course, slug: '../outside' }] }, {}), /课程/);
+  assert.throws(() => normalizeConfig({ categories, courses: [{ ...course, category: '不存在' }] }, {}), /课程/);
 });
 
 test('real templates resolve assets, article URLs, RSS, canonical links, and table of contents at root and project paths', async (t) => {

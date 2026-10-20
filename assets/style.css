@@ -184,3 +184,30 @@ p { margin-bottom: 20px; }
 .prose .math-error { color: #f2afa0; }
 .prose a[href*="/interactive/"] { display: inline-block; padding-bottom: 3px; font-size: 13px; }
 .prose a[href*="/interactive/"]::after { content: ' ↗'; }
+
+/* Course collections remain part of their parent category. */
+.course-section { margin: 0 0 34px; }
+.course-label { margin: 0; padding: 10px 0; color: var(--muted); font: 12px/1.8 var(--mono), var(--sans); }
+.course-entry { display: flex; align-items: center; justify-content: space-between; gap: 22px; padding: 21px 0; border-block: 1px solid var(--line); }
+.course-entry h3 { margin: 0 0 7px; font-size: 17px; }
+.course-entry h3 span, .lesson-number { color: var(--accent); }
+.course-entry p, .lesson-entry p { margin: 0; color: var(--muted); font-size: 12px; }
+.course-count { flex-shrink: 0; color: var(--muted); font: 11px/1.8 var(--mono), var(--sans); }
+.page-course .page-heading { margin-top: 24px; padding-bottom: 14px; }
+.course-progress { margin-bottom: 24px; color: var(--muted); font-size: 12px; }
+.lesson-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.lesson-entry { display: grid; grid-template-columns: 40px minmax(0, 1fr) 16px; align-items: start; gap: 20px; padding: 26px 0; border-bottom: 1px solid var(--line); }
+.lesson-number { padding-top: 3px; font: 15px/1.8 var(--mono); }
+.lesson-entry h2 { margin: 0 0 10px; font-size: 18px; line-height: 1.8; overflow-wrap: anywhere; }
+.lesson-entry time { display: block; margin-top: 12px; color: var(--muted); font: 11px/1.8 var(--mono); }
+.lesson-arrow { color: var(--muted); }
+.course-context { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding: 13px 0; margin-bottom: 20px; color: var(--accent); font-size: 12px; border-bottom: 1px solid var(--line); }
+.course-context span { color: var(--muted); }
+.course-navigation { display: flex; flex-direction: column; gap: 14px; padding-top: 25px; margin-top: 32px; border-top: 1px solid var(--line); color: var(--accent); font-size: 13px; }
+@media (max-width: 600px) {
+  .course-entry { align-items: start; gap: 12px; }
+  .course-entry h3 { font-size: 16px; }
+  .lesson-entry { grid-template-columns: 27px minmax(0, 1fr); gap: 13px; }
+  .lesson-entry h2 { font-size: 17px; }
+  .lesson-arrow { display: none; }
+}
