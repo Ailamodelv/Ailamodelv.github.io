@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="940" viewBox="0 0 1320 940" role="img" aria-labelledby="title desc">
+<title id="title">HDPG动态权重的计算与作用位置</title><desc id="desc">通过当前策略的归一化单步奖励计算均值与波动统计量，按式9形成动态权重，再对actor的分项策略梯度加权；critic的分项奖励目标不随权重改写。</desc>
+<defs><marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 Z" fill="#286B94"/></marker><marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 Z" fill="#128780"/></marker></defs>
+<style>text { font-family: "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", sans-serif; } </style>
+<rect x="0" y="0" width="1320" height="940" rx="0" fill="#F7F9FC"/>
+<text x="48" y="62" font-size="36" fill="#17304A" font-weight="700" text-anchor="start">动态权重如何进入 HDPG 的训练</text>
+<text x="48" y="104" font-size="22" fill="#4E637A" font-weight="400" text-anchor="start">统计当前策略的单步奖励，调整各项策略梯度的相对贡献。</text>
+<rect x="64" y="180" width="344" height="160" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="236.0" y="222" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">归一化单步奖励</text>
+<text x="236.0" y="260" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">r₁, r₂, …, r_K</text>
+<text x="236.0" y="292" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">由当前策略交互采样</text>
+<rect x="488" y="180" width="344" height="160" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="660.0" y="222" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">计算通道统计</text>
+<text x="660.0" y="260" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">均值 μₖ 与波动统计量</text>
+<text x="660.0" y="292" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">当前表现与波动</text>
+<rect x="912" y="180" width="344" height="160" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="1084.0" y="222" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">形成优先级分数</text>
+<text x="1084.0" y="260" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">μₖ + exp(σₖ²)</text>
+<text x="1084.0" y="292" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">均值与波动共同参与</text>
+<path d="M 412 258 H 479" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 836 258 H 903" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 1084 344 V 396" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="64" y="408" width="1192" height="140" rx="22" fill="#EBF7F4" stroke="#BBDCD5" stroke-width="2"/>
+<text x="660" y="461" font-size="28" fill="#17304A" font-weight="700" text-anchor="middle">mₖ = K (μₖ + exp(σₖ²)) / Σⱼ (μⱼ + exp(σⱼ²))</text>
+<text x="660" y="508" font-size="22" fill="#128780" font-weight="400" text-anchor="middle">每 20 个 episode 更新一次   ·   Σₖ mₖ = K（平均权重为 1）</text>
+<rect x="64" y="638" width="450" height="178" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="289.0" y="680" font-size="27" fill="#17304A" font-weight="700" text-anchor="middle">Critic 的分项目标</text>
+<text x="289" y="724" font-size="25" fill="#17304A" font-weight="400" text-anchor="middle">y_k = r_k + γ Q_k(s′, π(s′))</text>
+<text x="289" y="774" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">目标不因 m_k 的变化被重新加权</text>
+<rect x="640" y="638" width="616" height="178" rx="16" fill="#EEF4FA" stroke="#CCD8E5" stroke-width="2"/>
+<text x="948.0" y="680" font-size="27" fill="#17304A" font-weight="700" text-anchor="middle">Actor 的更新方向</text>
+<text x="948" y="730" font-size="32" fill="#17304A" font-weight="700" text-anchor="middle">g = Σₖ mₖ gₖ</text>
+<text x="948" y="774" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">gₖ：第 k 项奖励对应的策略梯度</text>
+<path d="M 948 552 V 626" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<text x="991" y="599" font-size="22" fill="#128780" font-weight="400" text-anchor="start">权重 m</text>
+<path d="M 518 728 H 630" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<text x="574" y="701" font-size="20" fill="#286B94" font-weight="400" text-anchor="middle">分项梯度</text>
+<text x="660" y="868" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">权重依据均值和波动；它不等同于奖励增长率或技能依赖识别。</text>
+<text x="660" y="910" font-size="20" fill="#4E637A" font-weight="400" text-anchor="middle">方差记号采用教学约定；原文符号歧义见正文 §6.1。</text>
+</svg>

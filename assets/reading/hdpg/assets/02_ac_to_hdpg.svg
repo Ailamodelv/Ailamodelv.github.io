@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="940" viewBox="0 0 1320 940" role="img" aria-labelledby="title desc">
+<title id="title">从DDPG到MHDDPG再到HDPG</title><desc id="desc">三种可选训练结构都只有一个Actor；差别在于critic是否分项输出，以及分项策略梯度是否动态加权。</desc>
+<defs><marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 Z" fill="#286B94"/></marker><marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 Z" fill="#128780"/></marker></defs>
+<style>text { font-family: "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", sans-serif; } </style>
+<rect x="0" y="0" width="1320" height="940" rx="0" fill="#F7F9FC"/>
+<text x="48" y="62" font-size="36" fill="#17304A" font-weight="700" text-anchor="start">从单一总分到分项反馈，再到动态加权</text>
+<text x="48" y="104" font-size="22" fill="#4E637A" font-weight="400" text-anchor="start">三种可选训练结构：每种结构都只使用一个 Actor 联合控制关节。</text>
+<rect x="32" y="140" width="1256" height="194" rx="22" fill="#EEF4FA"/>
+<text x="61" y="212" font-size="27" fill="#17304A" font-weight="700" text-anchor="start">DDPG</text>
+<text x="61" y="250" font-size="20" fill="#4E637A" font-weight="400" text-anchor="start">奖励先求和</text>
+<rect x="276" y="174" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="398.5" y="216" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">标量奖励</text>
+<text x="398.5" y="254" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">r_total = Σ r_k</text>
+<rect x="550" y="174" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="672.5" y="216" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">单头 Critic</text>
+<text x="672.5" y="254" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">输出 Q_total</text>
+<rect x="824" y="174" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="946.5" y="216" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">总策略梯度</text>
+<text x="946.5" y="254" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">g = ∇J_total</text>
+<rect x="1100" y="174" width="150" height="126" rx="16" fill="#EBF7F4" stroke="#CCD8E5" stroke-width="2"/>
+<text x="1175.0" y="216" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">Actor</text>
+<text x="1175.0" y="254" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">1 个策略</text>
+<path d="M 524 238 H 543" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 798 238 H 817" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 1072 238 H 1093" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="32" y="370" width="1256" height="194" rx="22" fill="#EEF4FA"/>
+<text x="61" y="442" font-size="27" fill="#17304A" font-weight="700" text-anchor="start">MHDDPG</text>
+<text x="61" y="480" font-size="20" fill="#4E637A" font-weight="400" text-anchor="start">分项学习 · 等权</text>
+<rect x="276" y="404" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="398.5" y="446" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">6 维奖励向量</text>
+<text x="398.5" y="484" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">r₁, r₂, …, r₆</text>
+<rect x="550" y="404" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="672.5" y="446" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">多头 Critic</text>
+<text x="672.5" y="484" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">Q₁, Q₂, …, Q₆</text>
+<rect x="824" y="404" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="946.5" y="446" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">等权合并</text>
+<text x="946.5" y="484" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">g = Σ g_k</text>
+<rect x="1100" y="404" width="150" height="126" rx="16" fill="#EBF7F4" stroke="#CCD8E5" stroke-width="2"/>
+<text x="1175.0" y="446" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">Actor</text>
+<text x="1175.0" y="484" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">1 个策略</text>
+<path d="M 524 468 H 543" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 798 468 H 817" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 1072 468 H 1093" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<rect x="32" y="600" width="1256" height="194" rx="22" fill="#EBF7F4"/>
+<text x="61" y="672" font-size="27" fill="#17304A" font-weight="700" text-anchor="start">HDPG</text>
+<text x="61" y="710" font-size="20" fill="#4E637A" font-weight="400" text-anchor="start">分项学习 · 动态</text>
+<rect x="276" y="634" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="398.5" y="676" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">6 维奖励向量</text>
+<text x="398.5" y="714" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">r₁, r₂, …, r₆</text>
+<rect x="550" y="634" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="672.5" y="676" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">多头 Critic</text>
+<text x="672.5" y="714" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">Q₁, Q₂, …, Q₆</text>
+<rect x="824" y="634" width="245" height="126" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="946.5" y="676" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">动态加权</text>
+<text x="946.5" y="714" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">g = Σ m_k g_k</text>
+<rect x="1100" y="634" width="150" height="126" rx="16" fill="#EBF7F4" stroke="#CCD8E5" stroke-width="2"/>
+<text x="1175.0" y="676" font-size="25" fill="#17304A" font-weight="700" text-anchor="middle">Actor</text>
+<text x="1175.0" y="714" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">1 个策略</text>
+<path d="M 524 698 H 543" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<path d="M 798 698 H 817" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<path d="M 1072 698 H 1093" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<rect x="48" y="836" width="1224" height="70" rx="16" fill="#FFFFFF" stroke="#BCD9D5" stroke-width="2"/>
+<text x="660" y="880" font-size="24" fill="#17304A" font-weight="400" text-anchor="middle">六个头对应六种评价；关节动作由同一个策略网络共同产生。</text>
+</svg>

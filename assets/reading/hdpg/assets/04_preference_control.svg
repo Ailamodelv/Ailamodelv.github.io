@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="900" viewBox="0 0 1320 900" role="img" aria-labelledby="title desc">
+<title id="title">部署时按环境与偏好调节的条件策略扩展</title><desc id="desc">此图是概念性扩展架构，非HDPG原文实现。感知和历史经环境表征与权重选择器得到z和w，再输入冻结的条件Actor。改变输入权重不等于部署时训练网络。</desc>
+<defs><marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 Z" fill="#286B94"/></marker><marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 Z" fill="#128780"/></marker></defs>
+<style>text { font-family: "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", sans-serif; } </style>
+<rect x="0" y="0" width="1320" height="900" rx="0" fill="#F7F9FC"/>
+<text x="48" y="62" font-size="36" fill="#17304A" font-weight="700" text-anchor="start">扩展：让部署策略接收可调偏好</text>
+<text x="48" y="104" font-size="22" fill="#4E637A" font-weight="400" text-anchor="start">概念性扩展架构，非 HDPG 原文实现。</text>
+<rect x="32" y="134" width="1256" height="474" rx="24" fill="#EEF4FA" stroke="#C4D5E5" stroke-width="2"/>
+<rect x="64" y="279" width="262" height="156" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="195.0" y="321" font-size="27" fill="#17304A" font-weight="700" text-anchor="middle">感知、历史与命令</text>
+<text x="195.0" y="359" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">本体观测 + 环境信息</text>
+<text x="195.0" y="391" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">历史数据 + 任务命令</text>
+<rect x="428" y="216" width="306" height="124" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="581.0" y="258" font-size="27" fill="#17304A" font-weight="700" text-anchor="middle">环境表征</text>
+<text x="581.0" y="296" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">编码局部情形为 z</text>
+<rect x="428" y="464" width="306" height="124" rx="16" fill="#EBF7F4" stroke="#CCD8E5" stroke-width="2"/>
+<text x="581.0" y="506" font-size="27" fill="#17304A" font-weight="700" text-anchor="middle">权重选择器</text>
+<text x="581.0" y="544" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">选择偏好权重 w</text>
+<rect x="810" y="292" width="310" height="236" rx="20" fill="#FFFFFF" stroke="#97CFC6" stroke-width="2"/>
+<text x="965" y="338" font-size="29" fill="#17304A" font-weight="700" text-anchor="middle">条件 Actor</text>
+<text x="965" y="389" font-size="27" fill="#17304A" font-weight="400" text-anchor="middle">a = π(o, c, z, w)</text>
+<text x="965" y="441" font-size="23" fill="#4E637A" font-weight="400" text-anchor="middle">观测 o · 命令 c</text>
+<text x="965" y="480" font-size="23" fill="#4E637A" font-weight="400" text-anchor="middle">表征 z · 偏好 w</text>
+<rect x="1170" y="351" width="112" height="116" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="1226.0" y="393" font-size="27" fill="#17304A" font-weight="700" text-anchor="middle">动作</text>
+<text x="1226.0" y="431" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">a</text>
+<path d="M 330 344 H 374 V 278 H 419" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 326 302 H 350 V 173 H 965 V 281" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<text x="970" y="212" font-size="22" fill="#286B94" font-weight="400" text-anchor="middle">观测 o + 命令 c</text>
+<path d="M 581 344 V 455" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<text x="622" y="409" font-size="22" fill="#128780" font-weight="400" text-anchor="start">情形 z</text>
+<path d="M 738 278 H 774 V 355 H 800" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<text x="765" y="327" font-size="23" fill="#286B94" font-weight="400" text-anchor="end">z</text>
+<path d="M 738 526 H 774 V 480 H 800" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<text x="765" y="507" font-size="23" fill="#128780" font-weight="400" text-anchor="end">w</text>
+<path d="M 1124 409 H 1160" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<rect x="64" y="644" width="1192" height="160" rx="20" fill="#EBF7F4" stroke="#BBDCD5" stroke-width="2"/>
+<text x="92" y="687" font-size="27" fill="#128780" font-weight="700" text-anchor="start">部署时可以冻结网络参数</text>
+<text x="92" y="733" font-size="23" fill="#17304A" font-weight="400" text-anchor="start">权重 w 作为输入改变策略行为；选择器参数也可以固定。</text>
+<text x="92" y="775" font-size="23" fill="#17304A" font-weight="400" text-anchor="start">需在训练时覆盖不同偏好，并验证偏好切换后的稳定性。</text>
+<text x="660" y="864" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">此图用于讨论状态相关的偏好控制，不代表论文已经验证了这一系统。</text>
+</svg>

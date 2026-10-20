@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="930" viewBox="0 0 1320 930" role="img" aria-labelledby="title desc">
+<title id="title">AIDA 的控制闭环与训练反馈</title><desc id="desc">部署时使用观测、Actor、关节目标角和平滑及PD控制构成闭环；训练时通过多头Critic和动态梯度更新同一个Actor。</desc>
+<defs><marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 Z" fill="#286B94"/></marker><marker id="arrow-teal" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 Z" fill="#128780"/></marker></defs>
+<style>text { font-family: "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", sans-serif; } </style>
+<rect x="0" y="0" width="1320" height="930" rx="0" fill="#F7F9FC"/>
+<text x="48" y="62" font-size="36" fill="#17304A" font-weight="700" text-anchor="start">从观测到电机：AIDA 的闭环控制</text>
+<text x="48" y="104" font-size="22" fill="#4E637A" font-weight="400" text-anchor="start">一个 Actor 同时给出 10 个关节的目标角；多头 Critic 提供训练反馈。</text>
+<rect x="32" y="132" width="1256" height="368" rx="24" fill="#EBF7F4" stroke="#BBDCD5" stroke-width="2"/>
+<text x="56" y="176" font-size="26" fill="#128780" font-weight="700" text-anchor="start">部署：传感、决策与执行</text>
+<rect x="56" y="218" width="218" height="158" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="165.0" y="260" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">69 维观测</text>
+<text x="165.0" y="298" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">关节角 + IMU</text>
+<text x="165.0" y="330" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">最近 3 帧拼接</text>
+<rect x="300" y="218" width="218" height="158" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="409.0" y="260" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">Actor</text>
+<text x="409.0" y="298" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">一个策略网络</text>
+<text x="409.0" y="330" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">同时计算 10 个关节</text>
+<rect x="544" y="218" width="218" height="158" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="653.0" y="260" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">10 维目标角</text>
+<text x="653.0" y="298" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">每关节 1 个角度</text>
+<text x="653.0" y="330" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">同一次前向计算</text>
+<rect x="788" y="218" width="218" height="158" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="897.0" y="260" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">执行模块</text>
+<text x="897.0" y="298" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">最小 jerk 平滑</text>
+<text x="897.0" y="330" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">底层 PD 跟踪</text>
+<rect x="1032" y="218" width="218" height="158" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="1141.0" y="260" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">AIDA 机器人</text>
+<text x="1141.0" y="298" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">10 个自由度</text>
+<text x="1141.0" y="330" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">每条腿 5 个自由度</text>
+<path d="M 276 297 H 293" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<path d="M 520 297 H 537" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<path d="M 764 297 H 781" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<path d="M 1008 297 H 1025" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<path d="M 1141 378 V 432 H 165 V 382" fill="none" stroke="#128780" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<text x="660" y="472" font-size="22" fill="#128780" font-weight="400" text-anchor="middle">新的关节角与 IMU 数据进入下一次控制更新</text>
+<rect x="32" y="532" width="1256" height="312" rx="24" fill="#EEF4FA" stroke="#C4D5E5" stroke-width="2"/>
+<text x="56" y="574" font-size="26" fill="#286B94" font-weight="700" text-anchor="start">训练：评价动作，并更新同一个 Actor</text>
+<rect x="70" y="622" width="330" height="138" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="235.0" y="664" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">经验与奖励</text>
+<text x="235.0" y="702" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">交互样本 + 6 类奖励</text>
+<text x="235.0" y="734" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">为各通道提供学习目标</text>
+<rect x="495" y="622" width="330" height="138" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="660.0" y="664" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">多头 Critic</text>
+<text x="660.0" y="702" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">分别估计 6 项长期回报</text>
+<text x="660.0" y="734" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">共享底层，6 个价值输出</text>
+<rect x="920" y="622" width="330" height="138" rx="16" fill="#FFFFFF" stroke="#CCD8E5" stroke-width="2"/>
+<text x="1085.0" y="664" font-size="26" fill="#17304A" font-weight="700" text-anchor="middle">分项策略梯度</text>
+<text x="1085.0" y="702" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">动态加权后合成</text>
+<text x="1085.0" y="734" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">更新 Actor 的参数</text>
+<path d="M 404 690 H 486" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 829 690 H 911" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+<path d="M 1254 690 H 1294 V 198 H 409 V 209" fill="none" stroke="#286B94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 7" marker-end="url(#arrow-blue)"/>
+<text x="1090" y="811" font-size="22" fill="#286B94" font-weight="400" text-anchor="middle">仅训练时改变参数</text>
+<text x="660" y="892" font-size="22" fill="#4E637A" font-weight="400" text-anchor="middle">实线：机器人控制与传感反馈     ·     虚线：训练参数更新</text>
+</svg>
