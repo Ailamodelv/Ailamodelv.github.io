@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc">
+  <title id="title">连续付出两步成本后，到达高收益工作区</title>
+  <desc id="desc">A 普通区、B 中转区每步工作获得 1，C 高收益区每步工作获得 4。A 可用一步移动到 B，B 可用一步移动到 C，每次移动奖励为负 2。所有区域工作后留在原地。折扣因子为 0.9，C 不是终点。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#598c74"/></marker></defs>
+  <rect width="1200" height="500" rx="20" fill="#f5f8f6"/>
+  <g font-family="'Microsoft YaHei','PingFang SC',sans-serif" fill="#21382e">
+    <text x="64" y="60" font-size="26" font-weight="700">三状态工作区</text>
+    <text x="64" y="94" font-size="17" fill="#60746a">每个工作或移动动作均占用一步 · 折扣因子 γ = 0.9</text>
+    <g fill="none" stroke="#598c74" stroke-width="3" marker-end="url(#arrow)">
+      <path d="M 335 260 H 430"/>
+      <path d="M 735 260 H 830"/>
+      <path d="M 255 206 C 300 110 100 110 145 206"/>
+      <path d="M 655 206 C 700 110 500 110 545 206"/>
+      <path d="M 1055 206 C 1100 110 900 110 945 206"/>
+    </g>
+    <g fill="#ffffff" stroke="#b7cbbf" stroke-width="2">
+      <rect x="65" y="210" width="270" height="130" rx="12"/>
+      <rect x="465" y="210" width="270" height="130" rx="12"/>
+      <rect x="865" y="210" width="270" height="130" rx="12" fill="#e1f0e8"/>
+    </g>
+    <g text-anchor="middle">
+      <text x="200" y="260" font-size="29" font-weight="700">A · 普通区</text>
+      <text x="600" y="260" font-size="29" font-weight="700">B · 中转区</text>
+      <text x="1000" y="260" font-size="29" font-weight="700">C · 高收益区</text>
+      <text x="200" y="303" font-size="18" fill="#60746a">可工作，也可去 B</text>
+      <text x="600" y="303" font-size="18" fill="#60746a">可工作，也可去 C</text>
+      <text x="1000" y="303" font-size="18" fill="#60746a">持续工作 · 不是终点</text>
+      <text x="200" y="120" font-size="18">工作 +1 / 步</text>
+      <text x="600" y="120" font-size="18">工作 +1 / 步</text>
+      <text x="1000" y="120" font-size="18">工作 +4 / 步</text>
+      <text x="400" y="236" font-size="18" fill="#94644d">移动 −2</text>
+      <text x="800" y="236" font-size="18" fill="#94644d">移动 −2</text>
+    </g>
+    <path d="M 65 390 H 1135" stroke="#d8e3dc"/>
+    <text x="65" y="433" font-size="19">从 A 去 C：第 1 步 −2 → 第 2 步 −2 → 第 3 步起每步 +4</text>
+    <text x="65" y="468" font-size="16" fill="#60746a">自环表示工作后仍在当前区域；箭头表示可选动作，不表示计算时机器人已经执行。</text>
+  </g>
+</svg>
