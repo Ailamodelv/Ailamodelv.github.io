@@ -884,6 +884,7 @@ $$
 - [《强化学习的数学原理》课程目录](/courses/rl-math/)
 - [第 2 课：贝尔曼公式](/posts/rl-math-02-bellman-equation/)
 - [第 3 课：贝尔曼最优公式](/posts/rl-math-03-bellman-optimality/)
+- [第 4 课：值迭代与策略迭代](/posts/rl-math-04-value-policy-iteration/)：从收敛性质继续理解计算与停止条件。
 - [作者官方公开课主页](https://sites.google.com/site/shiyuzhaohomepage/opencourse)
 - [作者官方教材第 3 章：最优状态价值与贝尔曼最优公式](https://github.com/MathFoundationRL/Book-Mathematical-Foundation-of-Reinforcement-Learning/blob/main/3%20-%20Chapter%203%20Optimal%20State%20Values%20and%20Bellman%20Optimality%20Equation.pdf)
 - [作者官方教材第 4 章：值迭代与策略迭代](https://github.com/MathFoundationRL/Book-Mathematical-Foundation-of-Reinforcement-Learning/blob/main/3%20-%20Chapter%204%20Value%20Iteration%20and%20Policy%20Iteration.pdf)

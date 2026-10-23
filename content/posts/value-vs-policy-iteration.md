@@ -930,6 +930,7 @@ $$
 
 ## 延伸资料
 
+- [第 4 课：值迭代与策略迭代](/posts/rl-math-04-value-policy-iteration/)：系统整理三种算法及截断评估。
 - [赵世钰：强化学习公开课程主页](https://sites.google.com/site/shiyuzhaohomepage/opencourse)：对照课程中的贝尔曼最优方程、值迭代与策略迭代内容。
 - [本博客：《强化学习的数学原理》课程笔记](/courses/rl-math/)：按课次整理的学习内容。
 

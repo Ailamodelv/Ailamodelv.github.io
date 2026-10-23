@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="890" viewBox="0 0 1200 890" role="img" aria-labelledby="title desc">
+  <title id="title">CPG-RL 的控制链：从策略输出到电机力矩</title>
+  <desc id="desc">策略以100赫兹输出每腿的振幅目标、相位速度和方向速度。CPG以1000赫兹积分状态，再映射为足端位置、通过逆运动学得到关节角并以PD控制生成力矩。机器人反馈与CPG状态返回策略。</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#39694d"/></marker></defs>
+  <rect width="1200" height="890" rx="24" fill="#f3f6f2"/>
+  <g font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#1d3325">
+    <text x="56" y="62" font-size="30" font-weight="700">CPG-RL：网络调节节律，底层执行运动</text>
+    <text x="56" y="99" font-size="19" fill="#52655a">依据论文 Fig. 2、式 (3)—(8) 重新绘制；模块输出是一时刻的指令或状态</text>
+    <g stroke="#8da997" stroke-width="2">
+      <rect x="56" y="139" width="332" height="102" rx="12" fill="#e3eae1"/>
+      <rect x="434" y="139" width="332" height="102" rx="12" fill="#e3eae1"/>
+      <rect x="813" y="139" width="331" height="102" rx="12" fill="#e3eae1"/>
+      <rect x="260" y="290" width="680" height="104" rx="12" fill="#d7e8d9"/>
+      <rect x="260" y="449" width="680" height="104" rx="12" fill="#e3eae1"/>
+      <rect x="56" y="626" width="324" height="105" rx="12" fill="#e3eae1"/>
+      <rect x="438" y="626" width="324" height="105" rx="12" fill="#e3eae1"/>
+      <rect x="820" y="626" width="324" height="105" rx="12" fill="#e3eae1"/>
+    </g>
+    <g text-anchor="middle" font-size="23" font-weight="700">
+      <text x="222" y="180">运动指令</text><text x="600" y="180">机器人反馈</text><text x="979" y="180">CPG 内部状态</text>
+      <text x="600" y="329">策略网络 · 100 Hz</text>
+      <text x="600" y="488">CPG 状态积分 · 1 kHz</text>
+      <text x="218" y="669">足端轨迹映射</text><text x="600" y="669">逆运动学 IK</text><text x="982" y="669">关节 PD → 机器人</text>
+    </g>
+    <g text-anchor="middle" font-size="18">
+      <text x="222" y="215">前进 / 侧移 / 转向速度</text><text x="600" y="215">本体感知、足端接触等</text><text x="979" y="215">幅值、相位、朝向及其变化率</text>
+      <text x="600" y="365">每腿 μ、ω、ψ：幅值目标 / 相位速度 / 朝向速度</text>
+      <text x="600" y="526">持续保存并推进 r、ṙ、θ、φ；不会每次决策重置</text>
+      <text x="218" y="704">输出：足端位置 pᵈ</text><text x="600" y="704">输出：目标关节角 qᵈ</text><text x="982" y="704">输出：电机力矩 τ</text>
+    </g>
+    <g fill="none" stroke="#39694d" stroke-width="3" marker-end="url(#arrow)">
+      <path d="M222 241 L222 263 L460 263 L460 289"/>
+      <path d="M600 241 L600 289"/>
+      <path d="M979 241 L979 263 L740 263 L740 289"/>
+      <path d="M600 394 L600 448"/>
+      <path d="M600 553 L600 589 L218 589 L218 625"/>
+      <path d="M380 680 L437 680"/><path d="M762 680 L819 680"/>
+      <path d="M940 500 L1170 500 L1170 115 L979 115 L979 138"/>
+      <path d="M982 731 L982 768 L28 768 L28 116 L600 116 L600 138"/>
+    </g>
+    <text x="620" y="429" font-size="17" fill="#52655a">两次策略决策之间，底层仍推进 10 个控制步</text>
+    <text x="56" y="816" font-size="19">这里的核心设计：去掉显式振荡器耦合，由共享策略结合反馈协调四条腿。</text>
+    <text x="56" y="851" font-size="17" fill="#52655a">简化观测实验会删减部分输入；足端接触、关节执行与身体动力学仍属于闭环的一部分。</text>
+  </g>
+</svg>
